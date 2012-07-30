@@ -27,4 +27,6 @@ REKS is a extremely modular built framework, especially the module system. Think
 - Content system for the blog
 - Commenting system
 
-All these 3 systems can be split in to 3 modules. You might think that this is hard to split up and that takes time, but in REKS its not worse then copying the applicable routes, configs, controllers, views and models + libraries etc into a new application folder and include the module in the configuration of the parent application.
+All these 3 systems can be split in to 3 modules. You might think that this is hard to split up and that takes time,
+but in REKS its not worse then copying the applicable routes, configs, controllers, views and models + libraries etc into a new application
+folder and include the module in the configuration of the parent application.
