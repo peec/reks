@@ -5,6 +5,9 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 	
 	public function helloWorld(){
 		
+		$this->activeRoute->reverse();
+		
+		
 		// Render test.php in the mymodule module.
 		$this->view->mod('mymodule')->render('test');
 		
@@ -37,6 +40,7 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 	
 	
 	public function hello($to){
+		$this->activeRoute->reverse();
 		
 		echo "Hello $to!  ( Only characters a-z and A-Z is allowed up in the url bar ) ";
 	}

@@ -94,6 +94,12 @@ class Router{
 	public $app;
 	
 	
+	/**
+	 * 
+	 * @var reks\ActiveRoute
+	 */
+	public $activeRoute;
+	
 	private $sharedResources = array();
 	
 	private $globalResources = array();
@@ -261,7 +267,11 @@ class Router{
 		
 		foreach($this->routes as $route){
 			if ($requestType == $route->getType()  || $route->getType() == '*'){
-				if ($r = $route->compare())return $r;
+				if ($r = $route->compare()){
+					// Set active route.
+					$this->activeRoute = new ActiveRoute($this->getResource(App::RES_URL), $route, $r);
+					return $r;
+				}
 			}
 		}
 		return null;
@@ -332,7 +342,7 @@ class Router{
 			$this->getResource(App::RES_REQUEST), 
 			$this->log, 
 			$this->getResource(App::RES_MODELWRAPPER),
-			new ActiveRoute($this->getResource(App::RES_URL), $rawController, $controller, $method, $args)
+			$this->activeRoute
 		);
 				
 		
@@ -404,68 +414,4 @@ class RouteParseException extends \Exception{
 		}
 		parent::__construct("Router parse exception ".$message, 1, null);
 	}
-}
-
-/**
- * Class to return active router pair combination.
- * @author loltroll
- *
- */
-class ActiveRoute{
-	private $args;
-	private $controller;
-	private $method;
-	private $rawController;
-	/**
-	 * 
-	 * @var reks\Url
-	 */
-	private $url;
-	
-	/**
-	 * 
-	 * @param string $controller Controller name.
-	 * @param string $method Method name
-	 * @param mixed $args Null or array of args.
-	 */
-	public function __construct($url, $rawController, $controller, $method, $args){
-		$this->args = $args;
-		$this->controller = $controller;
-		$this->method = $method;
-		$this->url = $url;
-		$this->rawController = $rawController;
-	}
-	/**
-	 * Fetches array or NULL of arguments passed.
-	 */
-	public function getArgs(){
-		return $this->args;
-	}
-	/**
-	 * Fetches the controller name of the active real controller.
-	 */
-	public function getController(){
-		return $this->controller;
-	}
-	/**
-	 * Returns the raw controller name from routing config.
-	 */
-	public function getRawController(){
-		return $this->rawController;
-	}
-	/**
-	 * Fetches the method name of the active real controller/method.
-	 */
-	public function getMethod(){
-		return $this->method;
-	}
-	
-	/**
-	 * Rerverses this route.
-	 */
-	public function reverse(){
-		return $this->url->reverse($this->getRawController().'.'.$this->getMethod(), $this->getArgs());
-	}
-	
-	
 }

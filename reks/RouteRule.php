@@ -74,6 +74,12 @@ class RouteRule{
 	
 	/**
 	 * Gets Controller, method and arguments from a $this->to string.
+	 * Returns:
+	 * array(
+	 *     CONTROLLER_NAME,
+	 *     METHOD_NAME,
+	 *     ARGUMENTS 
+	 * )
 	 */
 	public function parseTo(){
 		if ($this->componentsCache)return $this->componentsCache;
@@ -147,6 +153,13 @@ class RouteRule{
 	/**
 	 * Parses a from route to application array of variables.
 	 * Returns a parsed regexp from route and array of variables with names only.
+	 * 
+	 * Returns:
+	 * array(
+	 *     REGEXP URL,
+	 *     array( Var names )
+	 * )
+	 * 
 	 */
 	public function parseFrom(){
 		// Enable static caching.
@@ -261,7 +274,6 @@ class RouteRule{
 	/**
 	 * Gets a finished parsed components from a $to and $vars input.
 	 * $vars are from $this->parseFrom().
-	 * @param string $to
 	 * @param array $vars
 	 */
 	public function getBackend($vars){
