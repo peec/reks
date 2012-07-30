@@ -365,7 +365,7 @@ class Router{
 	 */
 	public function testRoutes(){
 		foreach($this->routes as $route){
-			list($from, $vars) = $route->vParser();
+			list($from, $vars) = $route->parseFrom();
 			foreach($vars as $k => $v){
 				$vars[$k]['val'] = 0;
 			}

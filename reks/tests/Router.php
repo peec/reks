@@ -7,15 +7,10 @@ class Router extends \reks\tester\TestCase{
 	 * Router instance.
 	 * @var reks\Router
 	 */
-	private $router;
+	protected $router;
 	
 	public function setup(){
-		$config['route']['*'] = array(
-			'/test' => 'One.index',
-			'/@one/@t' => 'Two.two(@one    ,  	@t)',
-			'/@reg<\d+>/@exp<[0-5]*>' => 'Three.three(@exp, @reg)'
-		);
-		
+		$config = array();
 		$this->router = new \reks\Router(
 			$this->app,
 			microtime(true),
@@ -35,14 +30,15 @@ class Router extends \reks\tester\TestCase{
 		$this->router->setURI('/test');
 		
 		// Test getComponents.
-		list($controller, $method, $args) = $this->router->getComponents('One.index');
+		$route = new \reks\RouteRule($this->router, '/test','One.index','*');
+		list($controller, $method, $args) = $route->parseTo();
 		$this->assertEqual($controller, 'One');
 		$this->assertEqual($method, 'index');
 		$this->assertArray($args);
 		$this->assertTrue(count($args) == 0);
 		
 		// Test reversing the controller / method.
-		$reversedLink = $this->router->reverse('One.index');
+		$reversedLink = $route->reverse('One.index');
 		$this->assertEqual('/test', $reversedLink);
 		
 	}
@@ -51,14 +47,17 @@ class Router extends \reks\tester\TestCase{
 	public function testRouteTwo(){
 		$this->router->setURI('/one/two');
 		
-		list($controller, $method, $args) = $this->router->getComponents('Two.two(@one    ,  	@t)');
+		
+		$route = new \reks\RouteRule($this->router, '/@one/@t','Two.two(@one    ,  	@t)','*');
+		list($controller, $method, $args) = $route->parseTo();
 		
 		$this->assertEqual($controller, 'Two');
 		$this->assertEqual($method, 'two');
 		$this->assertArray($args);
 		$this->assertTrue(count($args) == 2);
 		
-		list($from, $vars) = $this->router->vParser('/@one/@t');
+		list($from, $vars) = $route->parseFrom();
+		
 		// Check the regexp generated from vParser.
 		$this->assertEqual($from, '/([A-Za-z0-9_\.\-]*)/([A-Za-z0-9_\.\-]*)');
 		// Check the vars.
@@ -66,7 +65,7 @@ class Router extends \reks\tester\TestCase{
 		$this->assertEqual($vars[1]['var'], '@t');
 		
 		// And test reverse.
-		$reversedLink = $this->router->reverse('Two.two', array('t' => 'dos', 'one' => 'ono'));
+		$reversedLink = $route->reverse('Two.two', array('t' => 'dos', 'one' => 'ono'));
 		$this->assertEqual($reversedLink, '/ono/dos');
 		
 		
@@ -74,14 +73,16 @@ class Router extends \reks\tester\TestCase{
 	
 	public function testRouteThree(){
 		$this->router->setURI('/123456789/12345');
-		list($controller, $method, $args) = $this->router->getComponents('Three.three(@exp, @reg)');
+		
+		$route = new \reks\RouteRule($this->router, '/@reg<\d+>/@exp<[0-5]*>','Three.three(@exp, @reg)','*');
+		list($controller, $method, $args) = $route->parseTo();
 		
 		$this->assertEqual($controller, 'Three');
 		$this->assertEqual($method, 'three');
 		$this->assertArray($args);
 		$this->assertTrue(count($args) == 2);
 		
-		list($from, $vars) = $this->router->vParser('/@reg<\d+>/@exp<[0-5]*>');
+		list($from, $vars) = $route->parseFrom();
 		// Check the regexp generated from vParser.
 		$this->assertEqual($from, '/(\d+)/([0-5]*)');
 		// Check the vars.
@@ -89,7 +90,7 @@ class Router extends \reks\tester\TestCase{
 		$this->assertEqual($vars[1]['var'], '@exp');
 		
 		// And test reverse.
-		$reversedLink = $this->router->reverse('Three.three', array('reg' => 123456789, 'exp' => '12345'));
+		$reversedLink = $route->reverse('Three.three', array('reg' => 123456789, 'exp' => '12345'));
 		$this->assertEqual($reversedLink, '/123456789/12345');
 		
 	}
