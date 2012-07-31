@@ -80,7 +80,8 @@ class ModelWrapper{
 	 * Entity manager instance.
 	 * @var Doctrine\ORM\EntityManager
 	 */
-	public $entityManager;
+	static public $entityManager;
+	static public $doctrineIncluded = false;
 	
 	/**
 	 * Constructs the model loader.
@@ -92,6 +93,10 @@ class ModelWrapper{
 		$this->lang = $lang;
 		$this->log = $log;
 		$this->app = $app;
+		
+		if (isset($this->config['db_doctrine'])){
+			$this->useDoctrine();
+		}
 	}
 
 	/**
@@ -169,7 +174,7 @@ class ModelWrapper{
 
 	
 	public function useDoctrine(){
-		if ($this->entityManager) return;
+		if (self::$doctrineIncluded) return;
 		
 		require_once $this->app->BASE_REKS . '/reks/doctrine/Doctrine/ORM/Tools/Setup.php';
 		
@@ -199,7 +204,13 @@ class ModelWrapper{
 		}
 		
 		
-		$this->entityManager = \Doctrine\ORM\EntityManager::create($this->config['db_doctrine'], $config);
+		
+		self::$doctrineIncluded = true;
+		
+		self::$entityManager = \Doctrine\ORM\EntityManager::create($this->config['db_doctrine'], $config);
+		
+		
+		
 		
 	}
 	
@@ -207,8 +218,18 @@ class ModelWrapper{
 	 * Returns the entity manager if set.
 	 * @return \Doctrine\ORM\EntityManager
 	 */
-	public function em(){
-		return $this->entityManager;
+	static public function em(){
+		return self::$entityManager;
 	}
 	
+}
+
+// Create a static method for entity manager.
+
+/**
+ * Function to get entity manager.
+ * @return \Doctrine\ORM\EntityManager
+ */
+function em(){
+	return ModelWrapper::em();
 }
