@@ -76,12 +76,7 @@ class ModelWrapper{
 	public $app;
 	
 	
-	/**
-	 * Entity manager instance.
-	 * @var Doctrine\ORM\EntityManager
-	 */
-	static public $entityManager;
-	static public $doctrineIncluded = false;
+	
 	
 	/**
 	 * Constructs the model loader.
@@ -94,9 +89,8 @@ class ModelWrapper{
 		$this->log = $log;
 		$this->app = $app;
 		
-		if (isset($this->config['db_doctrine'])){
-			$this->useDoctrine();
-		}
+		
+		
 	}
 
 	/**
@@ -118,14 +112,6 @@ class ModelWrapper{
 
 	}
 	
-	/**
-	 * Decorates a entity object, useful if you want to apply objects when you have changed the constructor in your model.
-	 * @param unknown_type $object
-	 */
-	public function decorate($object){
-		$object->setup($this);
-		return $object;
-	}
 
 	public function newModel($model){
 		$p = '\model\\' . $model;
@@ -171,65 +157,5 @@ class ModelWrapper{
 	public function raw(){
 		return new RawModel($this);
 	}
-
 	
-	public function useDoctrine(){
-		if (self::$doctrineIncluded) return;
-		
-		require_once $this->app->BASE_REKS . '/reks/doctrine/Doctrine/ORM/Tools/Setup.php';
-		
-		$lib = $this->app->BASE_REKS . '/reks/doctrine';
-		
-		\Doctrine\ORM\Tools\Setup::registerAutoloadDirectory($lib);
-		
-		
-		if ($this->config['applicationMode'] == 'dev') {
-			$cache = new \Doctrine\Common\Cache\ArrayCache;
-		}else{
-			$cache = new \Doctrine\Common\Cache\ApcCache;
-		}
-		
-		$config = new \Doctrine\ORM\Configuration;
-		$config->setMetadataCacheImpl($cache);
-		$driverImpl = $config->newDefaultAnnotationDriver($this->app->APP_PATH . '/model');
-		$config->setMetadataDriverImpl($driverImpl);
-		$config->setQueryCacheImpl($cache);
-		$config->setProxyDir($this->app->APP_PATH . '/proxies');
-		$config->setProxyNamespace('proxies');
-		
-		if ($this->config['applicationMode'] == 'dev') {
-			$config->setAutoGenerateProxyClasses(true);
-		} else {
-			$config->setAutoGenerateProxyClasses(false);
-		}
-		
-		
-		
-		self::$doctrineIncluded = true;
-		
-		self::$entityManager = \Doctrine\ORM\EntityManager::create($this->config['db_doctrine'], $config);
-		
-		
-		
-		
-	}
-	
-	/**
-	 * Returns the entity manager if set.
-	 * @return \Doctrine\ORM\EntityManager
-	 */
-	static public function em(){
-		return self::$entityManager;
-	}
-	
-}
-
-// Create a static method for entity manager.
-
-/**
- * Function to get entity manager.
- * @return \Doctrine\ORM\EntityManager
- */
-function em(){
-	return ModelWrapper::em();
 }

@@ -5,8 +5,10 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 	
 	public function helloWorld(){
 		
-		$this->activeRoute->reverse();
-		
+		// Create a table "user" with username and database as properties (varchar 255) and uncomment the lines below.
+		// Remember to edit configuration db_doctrine ...
+		// $user = new \model\User();
+		//$user->createUser('test', 'test2');
 		
 		// Render test.php in the mymodule module.
 		$this->view->mod('mymodule')->render('test');

@@ -5,7 +5,7 @@ namespace model;
  * Example of user entity.
  * @Entity @Table(name="users")
  */
-class User extends \reks\DoctrineModel{
+class User{
 
 	/** @Id @Column(type="integer") @GeneratedValue **/
 	protected $id;
@@ -19,7 +19,8 @@ class User extends \reks\DoctrineModel{
 		$user = new User();
 		$user->password = $pass;
 		$user->username = $user;
-		$this->em->persist($user);
+		em()->persist($user);
+		em()->flush();
 	}
 	
 }

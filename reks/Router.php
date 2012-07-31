@@ -212,6 +212,13 @@ class Router{
 	 * Tries to parse the routes.
 	 */
 	public function route(){
+		// Note super application gets the priority of singleton!
+		// Load Doctrine em() function force.
+		if (isset($this->config['db_doctrine'])){
+			class_exists('\reks\DoctrineLoader', true);
+			DoctrineLoader::getInstance()->populate($this->app, $this->config['applicationMode'], $this->config['db_doctrine']);
+		}
+		
 		
 		if (PHP_SAPI == 'cli'){
 			$commandline = new CommandLine($this);

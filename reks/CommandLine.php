@@ -17,16 +17,13 @@ class CommandLine{
 	public function __construct(Router $r){
 		$this->router = $r;
 		
-		$wrapper = $this->router
-			->getResource(App::RES_MODELWRAPPER);
 		
-		$wrapper
-			->useDoctrine();
+		$em = \model\em();
 		
 		// Set the helpers needed.
 		$this->set = new \Symfony\Component\Console\Helper\HelperSet(array(
-				'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($wrapper->em()->getConnection()),
-				'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($wrapper->em())
+				'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($em->getConnection()),
+				'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($em)
 				));
 	}
 	

@@ -40,6 +40,7 @@ $config['db'] = array(
 
 /**
  * Doctrine Database configuration to access entity manager.
+ * use \model\em() function to access the enitity manager.
  * @var array
  */
 $config['db_doctrine'] = array(
