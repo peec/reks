@@ -16,12 +16,10 @@ abstract class DoctrineModel extends Model{
 	public $em;
 	
 	
-	public function __construct(ModelWrapper $modelwrapper){
-		parent::__construct($modelwrapper);
-	}
+
 	
 	public function openDB(){
-		$this->em = $modelwrapper->em();
+		$this->em = $this->model->em();
 	}
 	public function closeDB(){
 		

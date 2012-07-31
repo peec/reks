@@ -99,12 +99,18 @@ abstract class Model{
 	 * @var reks\App
 	 */
 	public $app;
-	
 	/**
 	 * Constructor for each model.
 	 * @param reks\ModelWrapper $modelwrapper Model wrapper object.
 	 */
 	public function __construct(ModelWrapper &$modelwrapper){
+		$this->setup($modelwrapper);
+	}
+	/**
+	 * Constructor for each model.
+	 * @param reks\ModelWrapper $modelwrapper Model wrapper object.
+	 */
+	public function setup(ModelWrapper &$modelwrapper){
 		$this->config = &$modelwrapper->config;
 		$this->lang = &$modelwrapper->lang;
 		$this->model = &$modelwrapper;

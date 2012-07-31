@@ -112,6 +112,15 @@ class ModelWrapper{
 		}
 
 	}
+	
+	/**
+	 * Decorates a entity object, useful if you want to apply objects when you have changed the constructor in your model.
+	 * @param unknown_type $object
+	 */
+	public function decorate($object){
+		$object->setup($this);
+		return $object;
+	}
 
 	public function newModel($model){
 		$p = '\model\\' . $model;
