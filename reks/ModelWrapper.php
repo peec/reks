@@ -77,6 +77,12 @@ class ModelWrapper{
 	
 	
 	/**
+	 * Entity manager instance.
+	 * @var Doctrine\ORM\EntityManager
+	 */
+	public $entityManager;
+	
+	/**
 	 * Constructs the model loader.
 	 * @param array $config The global config array.
 	 * @param reks\Lang $lang The language instance.
@@ -152,4 +158,48 @@ class ModelWrapper{
 		return new RawModel($this);
 	}
 
+	
+	public function useDoctrine(){
+		if ($this->entityManager) return;
+		
+		require_once $this->app->BASE_REKS . '/reks/doctrine/Doctrine/ORM/Tools/Setup.php';
+		
+		$lib = $this->app->BASE_REKS . '/reks/doctrine';
+		
+		\Doctrine\ORM\Tools\Setup::registerAutoloadDirectory($lib);
+		
+		
+		if ($this->config['applicationMode'] == 'dev') {
+			$cache = new \Doctrine\Common\Cache\ArrayCache;
+		}else{
+			$cache = new \Doctrine\Common\Cache\ApcCache;
+		}
+		
+		$config = new \Doctrine\ORM\Configuration;
+		$config->setMetadataCacheImpl($cache);
+		$driverImpl = $config->newDefaultAnnotationDriver($this->app->APP_PATH . '/model');
+		$config->setMetadataDriverImpl($driverImpl);
+		$config->setQueryCacheImpl($cache);
+		$config->setProxyDir($this->app->APP_PATH . '/proxies');
+		$config->setProxyNamespace('proxies');
+		
+		if ($this->config['applicationMode'] == 'dev') {
+			$config->setAutoGenerateProxyClasses(true);
+		} else {
+			$config->setAutoGenerateProxyClasses(false);
+		}
+		
+		
+		$this->entityManager = \Doctrine\ORM\EntityManager::create($this->config['db_doctrine'], $config);
+		
+	}
+	
+	/**
+	 * Returns the entity manager if set.
+	 * @return \Doctrine\ORM\EntityManager
+	 */
+	public function em(){
+		return $this->entityManager;
+	}
+	
 }

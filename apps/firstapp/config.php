@@ -8,7 +8,12 @@ namespace reks;
  */
 $config=array(); // Do not change me!
 
-
+/**
+ * Application mode.
+ * Either: 'dev' or 'prod'.
+ * @var string
+ */
+$config['applicationMode'] = 'dev';
 
 /**
  * 
@@ -17,8 +22,10 @@ $config=array(); // Do not change me!
  */
 $config['language'] = 'en';
 
+
+
 /**
- * PDO Database configuration.
+ * PDO Database configuration ( NO ORM )
  * @var array
  */
 $config['db'] = array(
@@ -29,6 +36,22 @@ $config['db'] = array(
 		\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"
 	),
 );
+
+
+/**
+ * Doctrine Database configuration to access entity manager.
+ * @var array
+ */
+$config['db_doctrine'] = array(
+    'driver'   => 'pdo_mysql',
+    'user'     => 'root',
+    'password' => '',
+    'dbname'   => 'foo',
+);
+
+
+
+
 
 /**
  * Logging directory. Must be writable.
@@ -101,7 +124,7 @@ $module->register(
 // CREATE TABLE `modules` (module_id int(11)  PRIMARY KEY AUTO_INCREMENT, module_name varchar(255), module_flags int(11), active boolean);
 // Also create folder "modules".
 $module->registerHandler(function(\reks\Module $module, \reks\RawModel $db){
-	try{
+	/*try{
 		$db->openDB();
 		$rows = $db->select("SELECT module_name, module_flags, active FROM modules");
 		foreach($rows as $row){
@@ -112,7 +135,7 @@ $module->registerHandler(function(\reks\Module $module, \reks\RawModel $db){
 		}
 	}catch(\PDOException $e){
 		// Dont do anything.
-	}
+	}*/
 	
 });
 
@@ -121,7 +144,7 @@ $module->registerHandler(function(\reks\Module $module, \reks\RawModel $db){
 // Register a DB handler ( Note, you need database table , uncomment if you dont want it )
 // CREATE TABLE `configuration` (module_id int(11), conf_key varchar(255), conf_val TEXT, PRIMARY KEY(module_id, conf_key), FOREIGN KEY (module_id) REFERENCES modules(module_id));
 $configHandler = function(\reks\RawModel $db) use ($config){
-	try{
+	/*try{
 		$db->openDB();
 		$rows = $db->select("
 				SELECT
@@ -136,5 +159,6 @@ $configHandler = function(\reks\RawModel $db) use ($config){
 	}catch(\PDOException $e){
 		// Dont do anything.
 	}
+	return $config;*/
 	return $config;
 };

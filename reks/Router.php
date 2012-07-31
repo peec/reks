@@ -212,8 +212,14 @@ class Router{
 	 * Tries to parse the routes.
 	 */
 	public function route(){
-		$ok = $this->routeTrigger();
-		if (!$ok)$this->trigger('404', null, array(), 404);
+		
+		if (PHP_SAPI == 'cli'){
+			$commandline = new CommandLine($this);
+			$commandline->run();
+		}else{
+			$ok = $this->routeTrigger();
+			if (!$ok)$this->trigger('404', null, array(), 404);
+		}
 	}
 	
 
