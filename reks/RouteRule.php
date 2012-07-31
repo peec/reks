@@ -450,14 +450,86 @@ class RouteRule{
 		}
 	}
 	
-	
+	/**
+	 * Gets the from part unparsed.
+	 * Such as: /test/@test
+	 */
 	public function getFrom(){
 		return $this->from;
 	}
+	
+	/**
+	 * Gets the from part un parsed
+	 * Example: Test.index(@test)
+	 */
 	public function getTo(){
 		return $this->to;
 	}
+	
+	/**
+	 * Gets the type of request ( *(ALL), get, post, put)
+	 */
 	public function getType(){
 		return $this->type;
 	}
+	
+	
+	/**
+	 * Parses the router rule to javascript.
+	 * @return string Javascript rule. It uses JS-methods from res/jsRoutes.php
+	 */
+	public function toJavascript(){
+		list($controller, $method, $args) = $this->parseTo();
+		
+		
+		// @todo Must not be dynamic controller... We don't really support it..
+		// @todo Should this be possible? How?
+		if (substr($controller,0, 1) != '@') {
+				
+				
+			$dynamicMethod = substr($method,0, 1) == '@';
+		
+			$jsController = str_replace('/', '.', $controller) . (!$dynamicMethod  ? '.' . $method : '');
+			if (substr($jsController,0,1) == '.')$jsController = substr($jsController, 1);
+		
+			$from = $this->getFrom();
+		
+			// Special case... Dynamic method!
+			if ($dynamicMethod){
+				$args[] = $method;
+			}
+		
+			$params = array();
+		
+		
+			foreach($args as $var){
+				$from = str_replace("$var", '" + (function(k,v) {return v})("'.substr($var, 1).'", '.substr($var, 1).') + "', $from);
+				$params[] = substr($var, 1);
+			}
+		
+			
+			
+			$obj = new \stdClass();
+			$obj->method = ($this->getType() == '*' ? 'POST' : $this->getType());
+			$obj->url = '"'.$from.'"';
+			
+			$url = $this->router->getResource(App::RES_URL);
+			
+			// The javascript!
+			$str = sprintf(
+					"_nS('%s'); _root.%s =
+						function(%s){
+							var t =  _wA(%s);
+							return t;
+						}
+					", 
+					$jsController, 
+					$jsController, 
+					implode(',', $params),
+					'{'  .  "method: '{$obj->method}', url: \"".substr($url->asset(''), 0, -1).(!$url->removeScriptpath ? '/index.php' : '' )."\" + {$obj->url}"   .  '}'
+			);
+			return $str;
+		}
+	}
+	
 }

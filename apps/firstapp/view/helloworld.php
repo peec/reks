@@ -10,8 +10,14 @@
 		// If you change render() to compile(3600) all css files will be packed into one file.
 		$view->head->css
 		->add('style.css')
-		->render()?>
-	
+		->render();
+		
+		$view->head->js
+		->addJsRoutes()
+		->render();
+		?>
+		
+		
 	
 	<?php 
 		// Some magic here, when using head class methods this will output all the data
