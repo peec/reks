@@ -63,7 +63,7 @@ class Autoloader{
 	 */
 	public function __construct(App $app){
 		$this->app = $app;
-		spl_autoload_register(array($this, 'autoloader'));
+		spl_autoload_register(array($this, 'loader'));
 	}
 	
 	/**
@@ -74,7 +74,7 @@ class Autoloader{
 	 *
 	 * @param string $className Full class name including namespace.
 	 */
-	private function autoloader($className){
+	public function loader($className){
 		if (substr($className, 0, 1) == '\\')$className = substr($className, 1);
 		$fil = 
 		 (substr($className, 0, 5) == 'reks\\' ? $this->app->BASE_REKS : $this->app->APP_PATH)
