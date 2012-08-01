@@ -96,7 +96,7 @@ abstract class Controller{
 	/**
 	 * Deals with models.
 	 * Wrapper around loading and getting models.
-	 * @var reks\ModelWrapper
+	 * @var reks\repo\Repository
 	 */
 	public $model;
 	
@@ -152,7 +152,7 @@ abstract class Controller{
 	 * @param array $config Array of configuration from config.php
 	 * @param reks\Router $router Router reference.
 	 */
-	final public function __construct(array $config, Router $router, Url $url, State $state, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, ModelWrapper $modelWrapper, ActiveRoute $activeRoute){
+	final public function __construct(array $config, Router $router, Url $url, State $state, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute){
 		$this->config = $config;
 		$this->router = $router;
 		$this->app = $router->app;
@@ -165,7 +165,7 @@ abstract class Controller{
 		$this->view = $view;
 		$this->request = $request;
 		$this->log = $log;
-		$this->model = $modelWrapper;
+		$this->model = $repo;
 		$this->activeRoute = $activeRoute;
 	}
 	
@@ -182,12 +182,12 @@ abstract class Controller{
 	 * @param View $view
 	 * @param Request $request
 	 * @param Log $log
-	 * @param ModelWrapper $modelWrapper
+	 * @param reks\repo\Repository $repo
 	 * @param reks\ActiveRoute Active route object.
 	 * @return reks\Controller
 	 */
-	static public function init(Router $r, array $config, $controller, Url $url, State $state, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, ModelWrapper $modelWrapper, ActiveRoute $activeRoute){
-		$c = new $controller($config, $r, $url, $state, $lang, $ui, $csrf, $view, $request, $log, $modelWrapper, $activeRoute);
+	static public function init(Router $r, array $config, $controller, Url $url, State $state, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute){
+		$c = new $controller($config, $r, $url, $state, $lang, $ui, $csrf, $view, $request, $log, $repo, $activeRoute);
 		$c->setup();
 		return $c;
 	}

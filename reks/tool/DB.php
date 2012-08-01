@@ -32,7 +32,7 @@
  * @package reks
  * @author REKS group at Telemark University College
  */
-namespace reks;
+namespace reks\tool;
 /**
  * Database wrapper around the PDO class.
  * 

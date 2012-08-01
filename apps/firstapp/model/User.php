@@ -2,7 +2,10 @@
 namespace model;
 
 /**
- * Example of user entity.
+ * Example of user entity. ( Doctrine 2 )
+ * 
+ * Here we don't use any database for best practices!
+ * It's a clean object, we use a repository to deal with the database, see "UserRepo" class.
  * @Entity @Table(name="users")
  */
 class User{
@@ -15,12 +18,9 @@ class User{
 	protected $password;
 	
 	
-	public function createUser($user, $pass){
-		$user = new User();
-		$user->password = $pass;
-		$user->username = $user;
-		em()->persist($user);
-		em()->flush();
+	public function __construct($user, $pass){
+		$this->username = $user;
+		$this->password = $pass;
 	}
 	
 }

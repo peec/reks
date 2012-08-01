@@ -10,7 +10,7 @@ class App{
 	const RES_LANG = 16;
 	const RES_VIEW = 32;
 	const RES_REQUEST = 64;
-	const RES_MODELWRAPPER = 128;
+	const RES_REPOSITORY = 128;
 	
 	const RES_ALL = 255;
 	
@@ -128,9 +128,9 @@ class App{
 		}
 		
 		// Private
-		if (self::RES_MODELWRAPPER & $flags){
+		if (self::RES_REPOSITORY & $flags){
 			if (!$router->getResource(self::RES_LANG))$this->setResources($router, self::RES_LANG);
-			$router->setResource(self::RES_MODELWRAPPER, new ModelWrapper($router->config, $router->getResource(self::RES_LANG), $router->log, $this));
+			$router->setResource(self::RES_REPOSITORY, new \reks\repo\Repository($router->config, $router->getResource(self::RES_LANG), $router->log, $this));
 		}
 	}
 	
@@ -143,7 +143,7 @@ class App{
 	public function loadCallbackConfig(Router $router){
 		$configHandler = $this->configHandler;
 		if ($configHandler != null){
-			$router->config = $configHandler($router->getResource(App::RES_MODELWRAPPER)->raw());
+			$router->config = $configHandler($router->getResource(App::RES_REPOSITORY)->rawDB());
 		}
 	}
 	

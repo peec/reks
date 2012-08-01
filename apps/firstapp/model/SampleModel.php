@@ -1,8 +1,12 @@
 <?php
 namespace model;
 
-
-class SampleModel extends \reks\Model{
+/**
+ * This uses no db.. Hence we just extend a normal Repo class.
+ * @author peec
+ *
+ */
+class SampleModel extends \reks\repo\Repo{
 	
 	public function hello(){
 		return 'Hello';

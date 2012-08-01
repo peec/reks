@@ -53,9 +53,9 @@ class Module{
 	
 	
 	public function preload(){
-		// Add DB handlers, because we can like these to be cool.
+		// Add DB handlers.
 		foreach ($this->callableHandlers as $handler){
-			$handler($this, $this->owner->getResource(App::RES_MODELWRAPPER)->raw());
+			$handler($this, $this->owner->getResource(App::RES_REPOSITORY)->rawDB());
 		}
 		// Run normal.
 		foreach($this->modules as $mod){
@@ -172,7 +172,7 @@ class ModuleItem{
 			$mRouter->setResource($key, $res);
 		}
 		// Set new privates.
-		$app->setResources($mRouter, App::RES_URL | App::RES_LANG | App::RES_VIEW | App::RES_MODELWRAPPER);
+		$app->setResources($mRouter, App::RES_URL | App::RES_LANG | App::RES_VIEW | App::RES_REPOSITORY);
 		
 		
 		
@@ -182,7 +182,7 @@ class ModuleItem{
 		
 		
 		if ((Module::INHERIT_DATABASE & $this->flags)){
-			$mRouter->setResource(App::RES_MODELWRAPPER, $this->router->getResource(App::RES_MODELWRAPPER));				
+			$mRouter->setResource(App::RES_REPOSITORY, $this->router->getResource(App::RES_REPOSITORY));				
 		}
 		
 		

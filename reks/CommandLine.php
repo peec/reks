@@ -18,7 +18,7 @@ class CommandLine{
 		$this->router = $r;
 		
 		
-		$em = \model\em();
+		$em = $this->router->getResource(App::RES_REPOSITORY)->_reks_repo_DoctrineRepo->em;
 		
 		// Set the helpers needed.
 		$this->set = new \Symfony\Component\Console\Helper\HelperSet(array(

@@ -3,12 +3,25 @@ namespace controller;
 
 class Main extends MyModule{ // Check this! , we are extending a class that really belongs to another app.
 	
+	/**
+	 * This method just gives you some basic examples of what we can do in the controller.
+	 */
 	public function helloWorld(){
 		
-		// Create a table "user" with username and database as properties (varchar 255) and uncomment the lines below.
-		// Remember to edit configuration db_doctrine ...
-		// $user = new \model\User();
-		//$user->createUser('test', 'test2');
+		
+		
+		
+		// Test database ...
+		// 1. Configurure db_doctrine configuration in config.php.
+		// 2. Create a database ( with the above configuration )
+		// 3. Go into commandline and to the public folder, run "php index.php orm:schema-tool:create".
+		// 4. Uncomment the line below!
+		// $this->model->UserRepo->createUser('user','mysecret_password');
+		// 5. You can also use normal PDO repo..
+		// $this->model->NormalDB->createUser('user','mysecret_password');
+		
+		// See NormalDB and UserRepo class in model directory to see the inner workings. 
+		
 		
 		// Render test.php in the mymodule module.
 		$this->view->mod('mymodule')->render('test');

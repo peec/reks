@@ -1,7 +1,7 @@
 <?php
-namespace reks;
+namespace reks\tool;
 
-class DoctrineLoader extends \reks\tool\Singleton{
+class DoctrineLoader{
 	/**
 	 * Entity manager instance.
 	 * @var Doctrine\ORM\EntityManager
@@ -29,11 +29,8 @@ class DoctrineLoader extends \reks\tool\Singleton{
 		return $this->em;
 	}
 	
-	/**
-	 * Populates this singleton with app instance.
-	 * @param App $app
-	 */
-	public function populate(App $app, $appMode, array $config){
+
+	public function __construct(\reks\App $app, $appMode, array $config){
 		$this->app = $app;
 		$this->config = $config;
 		$this->appMode = $appMode;
@@ -77,13 +74,3 @@ class DoctrineLoader extends \reks\tool\Singleton{
 	
 	
 }
-
-namespace model;
-/**
- * Function to get entity manager. Note if this is a module using this, the entity manager of the super application is used.
- * @return \Doctrine\ORM\EntityManager
- */
-function em(){
-	return \reks\DoctrineLoader::getInstance()->getEM();
-}
-
