@@ -188,7 +188,7 @@ class View{
 			// Return the array.
 			return $var;
 		// Exceptions assigned is not clonable, skip it.
-		}else if (is_object($var) && !($var instanceof \Exception)){
+		}else if (is_object($var) && !($var instanceof \Exception) && !($var instanceof \Closure)){
 			// Use reflection to set properties.
 			
 			
