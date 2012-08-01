@@ -40,7 +40,7 @@ abstract class ARepo{
 	 * Constructor for each model.
 	 * @param reks\repo\Repository $repo repository object
 	 */
-	public function setup(Repository &$repo){
+	public function setup(Repository $repo){
 		$this->config = &$repo->config;
 		$this->lang = &$repo->lang;
 		$this->model = &$repo;

@@ -187,7 +187,8 @@ class View{
 			}
 			// Return the array.
 			return $var;
-		}else if (is_object($var)){
+		// Exceptions assigned is not clonable, skip it.
+		}else if (is_object($var) && !($var instanceof \Exception)){
 			// Use reflection to set properties.
 			
 			// Clone it, we don't want anything to change except in the VIEW...
