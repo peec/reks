@@ -191,17 +191,20 @@ class View{
 		}else if (is_object($var) && !($var instanceof \Exception)){
 			// Use reflection to set properties.
 			
-			// Clone it, we don't want anything to change except in the VIEW...
-			$var = clone $var;
 			
-			// Get its properties..
-			$ref = new \ReflectionObject($var);
-			$props = $ref->getProperties();
-			foreach($props as $prop){
-				$prop->setAccessible(true);
-				$val = $prop->getValue($var);
-				if (is_string($val) || is_array($val) || is_object($val)){
-					$prop->setValue($var, $this->stripXSS($val));
+			if (!method_exists($var, '__clone')){
+				// Clone it, we don't want anything to change except in the VIEW...
+				$var = clone $var;
+				
+				// Get its properties..
+				$ref = new \ReflectionObject($var);
+				$props = $ref->getProperties();
+				foreach($props as $prop){
+					$prop->setAccessible(true);
+					$val = $prop->getValue($var);
+					if (is_string($val) || is_array($val) || is_object($val)){
+						$prop->setValue($var, $this->stripXSS($val));
+					}
 				}
 			}
 			
