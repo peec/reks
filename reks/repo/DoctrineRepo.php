@@ -20,8 +20,17 @@ class DoctrineRepo extends ARepo{
 	public function setup(Repository $repo){
 		parent::setup($repo);
 		if (!isset($this->config['db_doctrine']))throw new \Exception("Could not use Doctrine repository because configuration 'db_doctrine' does not exist in config.php file.");
-		$loader = new DoctrineLoader($this->app, $this->config['applicationMode'], $this->config['db_doctrine']);
-		$this->em = $loader->getEM();
+		
+		$app = $this->app;
+		$config = $this->config;
+		$this->em = $repo->sharedResource(
+			get_class(), 
+			function() use($app, $config){
+				$loader = new DoctrineLoader($app, $config['applicationMode'], $config['db_doctrine']);
+				return $loader->getEM();
+			}
+		);
+		
 	}
 	
 	

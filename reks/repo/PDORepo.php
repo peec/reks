@@ -55,7 +55,12 @@ class PDORepo extends ARepo{
 	public function setup(Repository $repo){
 		parent::setup($repo);
 		$dbconfig = $repo->config['db'];
-		$this->db = new \reks\tool\DB($dbconfig['dsn'], $dbconfig['username'], $dbconfig['password'], $dbconfig['driver_options']);
+		$this->db = $repo->sharedResource(
+				get_class(),
+				function() use($dbconfig){
+					return new \reks\tool\DB($dbconfig['dsn'], $dbconfig['username'], $dbconfig['password'], $dbconfig['driver_options']);
+				}
+		);
 	}
 
 	

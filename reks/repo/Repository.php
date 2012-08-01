@@ -33,6 +33,9 @@ class Repository{
 	public $app;
 	
 	
+	private $sharedResources = array();
+	
+	
 	/**
 	 * Constructs the model loader.
 	 * @param array $config The global config array.
@@ -68,6 +71,13 @@ class Repository{
 		$obj = new $name();
 		$obj->setup($this);
 		return $obj;
+	}
+	
+	public function sharedResource($id, $closure){
+		if (!is_callable($closure))throw new \Exception("Shared resource closure must be callable.");
+		if (isset($this->sharedResources[$id]))return $this->sharedResources[$id];
+		$this->sharedResources[$id] = $closure();
+		return $this->sharedResources[$id];
 	}
 	
 	/**
