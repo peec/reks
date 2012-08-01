@@ -110,14 +110,18 @@ class View{
 	 * @var array
 	 */
 	private $cacheQueue = array();
-	
+	/**
+	 * Router instance. Private.
+	 * @var reks\Router
+	 */
+	public $router;
 	
 	
 	/**
 	 * Constructs a new view object.
 	 * @param array $config Global configuration.
 	 */
-	public function __construct(array $config, Lang $lang, $url, App $app){
+	public function __construct(array $config, Lang $lang, $url, App $app, Router $router){
 		$this->config = $config;
 		$this->lang = $lang;
 		$this->form = new \reks\form\FormWrapper;
@@ -125,6 +129,7 @@ class View{
 		$this->url = $url;
 		$this->head = new view\Head($this);
 		$this->app = $app;
+		$this->router = $router;
 	}
 
 	public function appendViewHandler(View $v){
@@ -182,6 +187,23 @@ class View{
 			}
 			// Return the array.
 			return $var;
+		}else if (is_object($var)){
+			// Use reflection to set properties.
+			
+			// Clone it, we don't want anything to change except in the VIEW...
+			$var = clone $var;
+			
+			// Get its properties..
+			$ref = new \ReflectionObject($var);
+			$props = $ref->getProperties();
+			foreach($props as $prop){
+				$prop->setAccessible(true);
+				$val = $prop->getValue($var);
+				if (is_string($val) || is_array($val) || is_object($val)){
+					$prop->setValue($var, $this->stripXSS($val));
+				}
+			}
+			
 		}
 
 		// Well, this is either a int, float and so fourth - meaning it does not need to be escaped. Return.
@@ -362,6 +384,10 @@ class View{
 	 */
 	public function super(){
 		return $this->app->superRouter->getResource(App::RES_VIEW);
+	}
+	
+	public function getExecutionTime(){
+		return $this->router->getExecutionTime();
 	}
 	
 }

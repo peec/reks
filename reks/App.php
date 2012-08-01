@@ -119,7 +119,7 @@ class App{
 		
 		// Private
 		if (self::RES_VIEW & $flags){
-			$router->setResource(self::RES_VIEW, new View($router->config, $router->getResource(self::RES_LANG), $router->getResource(self::RES_URL), $this));
+			$router->setResource(self::RES_VIEW, new View($router->config, $router->getResource(self::RES_LANG), $router->getResource(self::RES_URL), $this, $router));
 		}
 		
 		// Shared
