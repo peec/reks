@@ -1,7 +1,7 @@
 REKS FRAMEWORK (PHP)
 ====
 
-Super lightweight OOP MVC framework for PHP - because you didn't need all those extra features.
+Super lightweight OOP MVC framework for PHP.
 
 
 ##### Documentation
@@ -16,6 +16,9 @@ Super lightweight OOP MVC framework for PHP - because you didn't need all those 
 - Namespaced.
 - Easy to get started
 - Routes and reverse routing.
+- Support for our own lightweight DB Abstract layer (PDO) and Doctrine 2 ORM, and easy to use other DBAL/ORM ( like redbreans, propel etc )
+
+
 
 ###### Why REKS
 
