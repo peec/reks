@@ -237,8 +237,10 @@ class View{
 	 * @param string $contentType The type of the content being rendered, default is text/html. For xml you shoul do text/xml
 	 * @param boolean $stringdata In cases where the view file should be threated as a normal file ( no php is supported if true )
 	 */
-	public function render($viewFile, $extraVars=array(), $charset = 'UTF-8', $contentType='text/html', $stringdata=false){
-
+	public function render($viewFile, $extraVars=array(), $runQueue = false, $stringdata=false){
+		$charset = 'UTF-8';
+		$contentType='text/html';
+		
 		// Set the path to the view file ( real path ).
 		if (realpath($this->app->APP_PATH . '/view/' . $viewFile . '.php'))$viewFilePath = $this->app->APP_PATH . '/view/' . $viewFile . '.php';
 		else $viewFilePath = $viewFile;
@@ -279,11 +281,9 @@ class View{
 		
 		$content = ob_get_clean();
 		
-		// Run queue.
-		foreach($this->viewQueue as $key => $q){
-			unset($this->viewQueue[$key]);
-			$q->render();
-		}
+		
+		$this->runQueue($runQueue);
+		
 		
 		// if we should cache.
 		if (isset($this->cacheQueue[$viewFile])){
@@ -292,7 +292,36 @@ class View{
 		
 		echo $content;
 	}
-	
+	/**
+	 * Runs view queue. After method run view Queue is reset.
+	 * true = Runs all in queue.
+	 * string = View file to run in queue.
+	 * closure = function($queue){ foreach($queue as $q){ }}
+	 * array = array('header','functions') , array of view files.
+	 * @param mixed $runQueue Can be array, string, closure and true.
+	 */
+	protected function runQueue($runQueue){
+		if ($runQueue === true){
+			// Run queue.
+			foreach($this->viewQueue as $key => $q){
+				unset($this->viewQueue[$key]);
+				$q->render();
+			}
+		}elseif($runQueue !== null && is_string($runQueue)){
+			$this->viewQueue[$runQueue]->render();
+			unset($this->viewQueue[$runQueue]);
+		}elseif($runQueue !== null && is_callable($runQueue)){
+			$runQueue($this->viewQueue);
+			$this->viewQueue = array();
+		}elseif($runQueue !== null && is_array($runQueue)){
+			foreach($this->viewQueue as $key => $q){
+				if (in_array($key, $runQueue)){
+					$q->render();
+					unset($this->viewQueue[$key]);
+				}
+			}
+		}
+	}
 	/**
 	 * Fetches content of a view file.
 	 * @param string $viewFile
@@ -349,15 +378,13 @@ class View{
 	 * @param string $viewFile The view file to be cached.
 	 * @param int $cacheForSecs Amount of seconds to cache the cached file.
 	 * @param mixed $seed A string or int making this cached file unique. Useful for db content. Example to include db id. 
-	 * @param string $charset Charset. default is utf-8.
- 	 * @param string $contentType Content type. Default is text/html.
 	 */
-	public function cache($viewFile, $cacheForSecs = 7200, $seed = null, $charset = 'UTF-8', $contentType='text/html'){
+	public function cache($viewFile, $cacheForSecs = 7200, $seed = null){
 		$token = sha1($viewFile . $seed).'.php';
 		$cachePath = $this->app->APP_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'views';
 		$fp = $cachePath . DIRECTORY_SEPARATOR . $token;
 		if (file_exists($fp) && filemtime($fp)+$cacheForSecs > time()){
-			$this->render($fp, array(), $charset, $contentType, true);
+			$this->render($fp, array(), null, true);
 			return true;
 		}
 		
