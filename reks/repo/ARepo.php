@@ -19,7 +19,7 @@ abstract class ARepo{
 	 * Model loader.
 	 * @var reks\repo\Repository
 	 */
-	public $repo;
+	public $model;
 	
 	/**
 	 * Logger instance. Used to log application data.

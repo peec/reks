@@ -81,7 +81,9 @@ class ScriptCompiler{
 	 * @param string $resource Resource from the public space. ( Where index.php is )
 	 */
 	public function add($resource){
-		$this->scripts[] = $resource;
+		if (isset($this->scripts[$resource]))return $this;
+		
+		$this->scripts[$resource] = $resource;
 		return $this;
 	}
 

@@ -117,6 +117,8 @@ class View{
 	public $router;
 	
 	
+	protected $viewQueue = array();
+	
 	/**
 	 * Constructs a new view object.
 	 * @param array $config Global configuration.
@@ -148,8 +150,12 @@ class View{
 	public function assign($var, $value, $stripXss = true){
 		$this->viewVars[$var] = $stripXss ? $this->stripXSS($value) : $value;
 	}
+	
+	
 
 	/**
+	 * @deprecated Use View.escape() method instead
+	 * 
 	 * Assigns a multi dimensional variable to the view.
 	 *
 	 * XSS attacks is automatically escaped from the $value field.
@@ -214,6 +220,13 @@ class View{
 		return $var;
 	}
 
+	/**
+	 * Alias of stripXSS.
+	 * @param mixed $var
+	 */
+	public function escape($var){
+		return $this->stripXSS($var);
+	}
 
 	/**
 	 * Renders ( outputs ) a view file to the browser.
@@ -257,11 +270,20 @@ class View{
 
 		ob_start();
 		
+		
+		
+		
 		// And .. finally - lets include the view file with simple include.
 		if ($stringdata) echo file_get_contents($viewFilePath);
 		else include $viewFilePath;
 		
 		$content = ob_get_clean();
+		
+		// Run queue.
+		foreach($this->viewQueue as $key => $q){
+			unset($this->viewQueue[$key]);
+			$q->render();
+		}
 		
 		// if we should cache.
 		if (isset($this->cacheQueue[$viewFile])){
@@ -394,4 +416,36 @@ class View{
 		return $this->router->getExecutionTime();
 	}
 	
+	
+	/**
+	 * Queue's a view file, when the next render method is used it will be rendered.
+	 * Especially useful for header files and such.
+	 * @param unknown_type $viewFile
+	 * @param unknown_type $extraVars
+	 */
+	public function queue($viewFile, $extraVars=array()){
+		$this->viewQueue[$viewFile] = new ViewQueue($this, $viewFile, $extraVars);
+	}
+	
+	public function getQueue($viewFile){
+		if (!isset($this->viewQueue[$viewFile]))throw new \Exception("Queue key $viewFile is not registered.");
+		return $this->viewQueue[$viewFile]->view;
+	}
+	
+	
+}
+
+class ViewQueue{
+	public $view;
+	public $viewFile;
+	public $extraVars = array();
+	public function __construct(View $view, $viewFile, array $extraVars = array()){
+		$this->view = $view;
+		$this->viewFile = $viewFile;
+		$this->extraVars = $extraVars;
+	}
+	
+	public function render(){
+		$this->view->render($this->viewFile, $this->extraVars);
+	}
 }
