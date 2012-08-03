@@ -46,8 +46,8 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 		$this->view->assign('header', 'REKS Framework!');
 		
 		// Append SEO friendly title. using the head class - title method.
-		$this->view->head->title('REKS Framework');
-		$this->view->head->title('Hello World');
+		$this->view->html->title('REKS Framework');
+		$this->view->html->title('Hello World');
 		
 		// Render a view file.
 		$this->view->render('helloworld');

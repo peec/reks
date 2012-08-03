@@ -6,23 +6,22 @@
 		Here you have examples of reverse routing of urls and some more goodies.
 	 -->
 	<?php 
-		// Use the Head class to add many style sheets.
-		// If you change render() to compile(3600) all css files will be packed into one file.
-		$view->head->css
+		// Use the Scripts class to add many style sheets.
+		$view->scripts->css
 		->add('style.css')
-		->render();
+		->display();
 		
-		$view->head->js
-		->addJsRoutes()
-		->render();
+		$view->scripts->js
+		->addJsRoutes();
 		?>
+		
 		
 		
 	
 	<?php 
 		// Some magic here, when using head class methods this will output all the data
 		// like <title></title> tags , description, and etc... See Head class in the reks\view package.
-		echo $view->head?>
+		echo $view->html?>
 	
 	
 </head>
@@ -53,5 +52,8 @@
 	<footer>
 		REKS group, <a href="http://reks.pkj.no">reks.pkj.no</a>
 	</footer>
+
+	<!-- Java scripts at the bottom. -->
+	<?php $view->scripts->js->display();?>	
 </body>
 </html>
