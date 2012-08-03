@@ -125,6 +125,7 @@ class Router{
 	public function setRoutes(\reks\core\Config $routes){
 		// Add built in routes.
 		$this->routes[] = new RouteRule($this, '/jsroutes', '/reks/controller/JSController.routes', 'get');
+		$this->routes[] = new RouteRule($this, '/jscache', '/reks/controller/JSController.cacheRoutes', 'get');
 		
 		// Add custom routes.
 		foreach($routes as $type => $route){
@@ -215,6 +216,9 @@ class Router{
 	 * Tries to parse the routes.
 	 */
 	public function route(){
+
+		ob_start("ob_gzhandler"); // Start Gunzip.
+		
 		// Parse in prod.
 		$this->getCachedRouteRules();
 		
@@ -384,7 +388,10 @@ class Router{
 
 		if ($result && $result instanceof Response){
 			$result->setView($this->getResource(App::RES_VIEW));
+
+			
 			$result->execute();
+			
 		}
 		
 		return $c;

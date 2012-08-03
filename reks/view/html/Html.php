@@ -34,9 +34,7 @@
  */
 namespace reks\view\html;
 /**
- * Head section handler.
- * Useful to use in <head> section of a html document
- * 
+ * Html handler.
  * @author REKS group at Telemark University College
  * @version 1.0
  *
@@ -44,22 +42,11 @@ namespace reks\view\html;
 class Html{
 	private $html = array();
 	
-	/**
-	 * Javascript compiler api.
-	 * @var reks\view\JsCompiler
-	 */
-	public $js;
-	
-	/**
-	 * Javascript compiler api.
-	 * @var reks\view\ScriptCompiler
-	 */
-	public $css;	
 	
 	/**
 	 * 
 	 * Enter description here ...
-	 * @var reks\View
+	 * @var reks\view\View
 	 */
 	private $view;
 	
@@ -162,6 +149,7 @@ class Html{
 					$html .= $c;
 			}
 		}
+		
 		return $html;
 	}
 	
@@ -174,8 +162,6 @@ class Html{
 	 * @param reks\View $view The view instance.
 	 */
 	public function __construct($view){
-		$this->js = new JsCompiler($view, 'js');
-		$this->css = new ScriptCompiler($view,'css');
 		$this->view = $view;
 	}
 	

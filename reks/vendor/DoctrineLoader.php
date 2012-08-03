@@ -29,7 +29,7 @@ class DoctrineLoader extends Loader{
 	}
 	
 	public function configure(\reks\core\Config $cnf){
-		if (!$this->app->inProduction()) {
+		if (!$this->app->inProduction() || !function_exists('apc_fetch')) {
 			$cache = new \Doctrine\Common\Cache\ArrayCache;
 		}else{
 			$cache = new \Doctrine\Common\Cache\ApcCache;

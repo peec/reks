@@ -59,6 +59,10 @@ class Response{
 				$this->build['content'] = $this->view->fetch($this->build['content']);
 				break;
 		}
+		header ('Content-type: '.$this->build['type'].'; charset=UTF-8');
+		
+
+		
 		echo $this->build['content'];
 	}
 	

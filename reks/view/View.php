@@ -64,13 +64,13 @@ class View{
 	 * Holds the language class variable.
 	 * Used for multi language projects.
 	 * 
-	 * @var reks\Lang language reference variable.
+	 * @var reks\core\Lang language reference variable.
 	 */
 	public $lang;
 	
 	/**
 	 * Use to add form listeners and create forms in the view.
-	 * @var reks\form\FormWrapper Form wrapper class.
+	 * @var reks\view\html\form\FormWrapper Form wrapper class.
 	 */
 	public $form;
 	
@@ -85,13 +85,13 @@ class View{
 	
 	/**
 	 * Url helper.
-	 * @var reks\Url
+	 * @var reks\http\Url
 	 */
 	public $url;
 
 	/**
 	 * Application instance.
-	 * @var reks\App
+	 * @var reks\core\App
 	 */
 	public $app;
 	
@@ -103,8 +103,7 @@ class View{
 	const CSRF_TOKEN_NAME = 'csrf_token_';
 	
 	/**
-	 * Header section class, makes things awfully easy!
-	 * @var reks\view\Html
+	 * @var reks\view\Html HTML instance, manipulate the html.
 	 */
 	public $html;
 	
@@ -113,14 +112,21 @@ class View{
 	 * @var array
 	 */
 	private $cacheQueue = array();
+	protected $viewQueue = array();
+	
+	
 	/**
 	 * Router instance. Private.
-	 * @var reks\Router
+	 * @var reks\router\Router
 	 */
 	public $router;
 	
+	/**
+	 * Deal with scripts ( JS and CSS )
+	 * @var reks\view\script\Scripts
+	 */
+	public $scripts;
 	
-	protected $viewQueue = array();
 	
 	/**
 	 * Constructs a new view object.
@@ -132,9 +138,10 @@ class View{
 		$this->form = new html\form\FormWrapper;
 		
 		$this->url = $url;
-		$this->head = new html\Html($this);
+		$this->html = new html\Html($this);
 		$this->app = $app;
 		$this->router = $router;
+		$this->scripts = new script\Scripts($this);
 	}
 
 	public function appendViewHandler(View $v){
@@ -272,7 +279,6 @@ class View{
 			header('Content-Type:'.$contentType.'; charset=' . $charset);
 			$this->headersSent = true;
 		}
-
 		ob_start();
 		
 		
@@ -292,7 +298,6 @@ class View{
 		if (isset($this->cacheQueue[$viewFile])){
 			file_put_contents($this->cacheQueue[$viewFile], $content);
 		}
-		
 		echo $content;
 	}
 	/**

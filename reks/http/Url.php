@@ -215,6 +215,14 @@ class Url{
 		return $this->router->app->superRouter->getResource(App::RES_URL);
 	}
 	
+	/**
+	 * Returns a new encryption object.
+	 * @param unknown_type $key
+	 * @return \reks\security\Encryption
+	 */
+	public function encryption($key = 'NOT_SECURE'){
+		return new \reks\security\Encryption($key);
+	}
 	
 }
 
