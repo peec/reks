@@ -31,7 +31,7 @@ abstract class Loader{
 	 * This configures the import done with import().
 	 * Use $this->config or $this->app to configure it.
 	 */
-	abstract public function configure(array $config);
+	abstract public function configure(\reks\core\Config $config);
 	
 	
 	

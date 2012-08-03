@@ -2,6 +2,8 @@
 namespace reks\cli;
 use Symfony\Component\Console\Application;
 use \reks\core\ReksData;
+use \reks\core\App;
+use \reks\router\Router;
 
 
 class CommandLine{
@@ -34,7 +36,19 @@ class CommandLine{
 	}
 	
 	public function run(){
-		\Doctrine\ORM\Tools\Console\ConsoleRunner::run($this->set);
+		
+		$appname = $this->router->app->APP_NAME;
+		
+		$commands = array(
+			new commands\app\PrepareProduction("prepare-production"),	
+				
+		);
+		
+		foreach($commands as $k => $c){
+			$commands[$k] = commands\app\AppCommand::appCommandFactory($c, $this->router->app);
+		}
+		
+		\Doctrine\ORM\Tools\Console\ConsoleRunner::run($this->set, $commands);
 	}
 	
 	

@@ -38,7 +38,7 @@ use reks\core\App,
 	reks\core\Module,
 	reks\core\Log;
 
-
+use reks\core\Config;
 /**
  * Factory for initializing the Router.
  * 
@@ -71,7 +71,7 @@ class RouterFactory{
 		$config = array('route' => array());
 		// Inheret config from super if any.
 		if ($superRouter){
-			$config = $superRouter->config;
+			$config = $superRouter->config->toArray(); // Convert to array.
 			$configHandler = $superRouter->app->configHandler;
 			if (file_exists($confFile))include $confFile;
 		}else{
@@ -79,8 +79,11 @@ class RouterFactory{
 			require $confFile;
 			$app->configHandler = isset($configHandler) ? $configHandler : null;
 		}
-		$router->setRoutes($config['route']);
-		$router->setConfig($config);
+		
+		$router->setRoutes(new Config($config['route']));
+		unset($config['route']);
+		$router->setConfig(new Config($config));
+		
 		$router->setLog(new Log($config['log_level'], $config['log_dir']));
 		
 		return $router;

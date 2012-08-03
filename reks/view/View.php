@@ -50,9 +50,9 @@ class View{
 	
 	/**
 	 * Array of configuration from config.php
-	 * @var array
+	 * @var reks\core\Config
 	 */
-	public $config = array();
+	public $config;
 	
 	/**
 	 * Array of view variables. Content of the value can be anything.
@@ -126,7 +126,7 @@ class View{
 	 * Constructs a new view object.
 	 * @param array $config Global configuration.
 	 */
-	public function __construct(array $config, Lang $lang, $url, App $app, Router $router){
+	public function __construct(\reks\core\Config $config, Lang $lang, $url, App $app, Router $router){
 		$this->config = $config;
 		$this->lang = $lang;
 		$this->form = new html\form\FormWrapper;

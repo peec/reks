@@ -38,10 +38,10 @@ class Repository{
 	
 	/**
 	 * Constructs the model loader.
-	 * @param array $config The global config array.
+	 * @param reks\core\Config $config The global config array.
 	 * @param reks\Lang $lang The language instance.
 	 */
-	public function __construct($config, $lang, $log, $app){
+	public function __construct(\reks\core\Config $config, $lang, $log, $app){
 		$this->config = &$config;
 		$this->lang = $lang;
 		$this->log = $log;

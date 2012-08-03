@@ -157,7 +157,7 @@ abstract class Controller{
 	 * @param array $config Array of configuration from config.php
 	 * @param reks\router\Router $router Router reference.
 	 */
-	final public function __construct(array $config, Router $router, Url $url, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute){
+	final public function __construct(\reks\core\Config $config, Router $router, Url $url, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute){
 		$this->config = $config;
 		$this->router = $router;
 		$this->app = $router->app;
@@ -189,7 +189,7 @@ abstract class Controller{
 	 * @param reks\router\ActiveRoute Active route object.
 	 * @return reks\controller\Controller
 	 */
-	static public function init(Router $r, array $config, $controller, Url $url, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute){
+	static public function init(Router $r, \reks\core\Config $config, $controller, Url $url, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute){
 		$c = new $controller($config, $r, $url, $lang, $ui, $csrf, $view, $request, $log, $repo, $activeRoute);
 		$c->setup();
 		return $c;

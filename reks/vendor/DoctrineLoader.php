@@ -28,7 +28,7 @@ class DoctrineLoader extends Loader{
 		
 	}
 	
-	public function configure(array $cnf){
+	public function configure(\reks\core\Config $cnf){
 		if (!$this->app->inProduction()) {
 			$cache = new \Doctrine\Common\Cache\ArrayCache;
 		}else{

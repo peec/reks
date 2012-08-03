@@ -60,7 +60,7 @@ class RouteRule{
 	
 	/**
 	 * 
-	 * @var reks\Router
+	 * @var reks\router\Router
 	 */
 	private $router;
 	
@@ -69,6 +69,18 @@ class RouteRule{
 		$this->to = $to;
 		$this->type = $type;
 		$this->router = $router;
+	}
+	
+	public function setParseCache($vars, $components){
+		$this->vParsecache = $vars;
+		$this->componentsCache = $components;
+	}
+	
+	public function parseAll(){
+		return array(
+					'vars' => $this->parseFrom(),
+					'components' => $this->parseTo()
+				);
 	}
 	
 	

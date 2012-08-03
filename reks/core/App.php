@@ -159,7 +159,7 @@ class App{
 	public function loadCallbackConfig(Router $router){
 		$configHandler = $this->configHandler;
 		if ($configHandler != null){
-			$router->config = $configHandler($router->getResource(App::RES_REPOSITORY)->rawDB());
+			$router->config = new \reks\core\Config($configHandler($router->getResource(App::RES_REPOSITORY)->rawDB()));
 		}
 	}
 	
@@ -169,18 +169,23 @@ class App{
 	 */
 	public function main(){
 		$router = $this->load(self::RES_ALL);
-		$this->internalRouter = $router;
+		$this->internalRouter = &$router;
 		
 		$this->loadCallbackConfig($router);
 		
 		return $router->route();
 	}
 	
+	public function getRoutesCacheFile(){
+		return $this->APP_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'reks.routes.cache.php';
+	}
+	
+	
 	/**
 	 * Returns true if application is in production, false if not.
 	 */
 	public function inProduction(){
-		$this->internalRouter->config['applicationMode'] == self::APP_MODE_PROD;
+		return $this->internalRouter->config['applicationMode'] == self::APP_MODE_PROD;
 	}
 	
 	

@@ -55,9 +55,9 @@ reks\http\Response;
 class Router{
 	/**
 	 * Array of configuration from config.php
-	 * @var array
+	 * @var reks\core\Config
 	 */
-	public $config = array();
+	public $config;
 
 
 	/**
@@ -69,7 +69,7 @@ class Router{
 
 	/**
 	 * Logger instance. Used to log application data.
-	 * @var reks\Log
+	 * @var reks\core\Log
 	 */
 	public $log;
 
@@ -93,7 +93,7 @@ class Router{
 	
 	/**
 	 * 
-	 * @var reks\App
+	 * @var reks\core\App
 	 */
 	public $app;
 	
@@ -122,7 +122,7 @@ class Router{
 	public function setLog(Log $log){
 		$this->log = $log;
 	}
-	public function setRoutes(array $routes){
+	public function setRoutes(\reks\core\Config $routes){
 		// Add built in routes.
 		$this->routes[] = new RouteRule($this, '/jsroutes', '/reks/controller/JSController.routes', 'get');
 		
@@ -132,9 +132,8 @@ class Router{
 				$this->routes[] = new RouteRule($this, $from, $to, $type);
 			}
 		}
-		
 	}
-	public function setConfig(array $config){
+	public function setConfig(\reks\core\Config $config){
 		$this->config = $config;
 	}
 	
@@ -216,8 +215,12 @@ class Router{
 	 * Tries to parse the routes.
 	 */
 	public function route(){
+		// Parse in prod.
+		$this->getCachedRouteRules();
+		
 		if (PHP_SAPI == 'cli'){
-			$commandline = new CommandLine($this);
+			
+			$commandline = new \reks\cli\CommandLine($this);
 			$commandline->run();
 		}else{
 			$ok = $this->routeTrigger();
@@ -225,6 +228,17 @@ class Router{
 		}
 	}
 	
+	protected function getCachedRouteRules(){
+		$file = $this->app->getRoutesCacheFile();
+		
+		if ($this->app->inProduction() && file_exists($file)){
+			include $file;
+			foreach($this->routes as $route){
+				$it = $parseCache[$route->getFrom()];
+				$route->setParseCache($it['vars'],$it['components']);
+			}
+		}
+	}
 
 	/**
 	 * Tries to route to locations.
