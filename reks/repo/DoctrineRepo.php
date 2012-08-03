@@ -25,8 +25,8 @@ class DoctrineRepo extends ARepo{
 		$config = $this->config;
 		$this->em = $repo->sharedResource(
 			get_class(), 
-			function() use($app, $config){
-				$loader = new DoctrineLoader($app, $config['applicationMode'], $config['db_doctrine']);
+			function() use($app){
+				$loader = $app->loadVendor('\reks\vendor\DoctrineLoader');
 				return $loader->getEM();
 			}
 		);

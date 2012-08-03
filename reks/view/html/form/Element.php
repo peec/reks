@@ -29,40 +29,62 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @license 3-clause BSD
- * @package reks
+ * @package reks\form
  * @author REKS group at Telemark University College
  */
-namespace reks\repo;
-
+namespace reks\view\html\form;
 /**
- * All models should extend this super class.
- *
- * @author REKS group at Telemark University College
- * @version 1.0
+ * All elements in the form will extend this abstract.
+ * @author peec
  *
  */
-class PDORepo extends ARepo{
-
-
+abstract class Element{
+	protected $attr = array();
+	
 	/**
-	 * Database instance.
-	 * @var reks\dbal\DBAL
+	 * Sets the id="" attribute of the element.
+	 * @param string $id The id of the form element.
+	 * @return reks\form\Element 
 	 */
-	public $db;
-	
-	
-
-	public function setup(Repository $repo){
-		parent::setup($repo);
-		$dbconfig = $repo->config['db'];
-		$this->db = $repo->sharedResource(
-				get_class(),
-				function() use($dbconfig){
-					return new \reks\dbal\DBAL($dbconfig['dsn'], $dbconfig['username'], $dbconfig['password'], $dbconfig['driver_options']);
-				}
-		);
+	public function id($id){
+		$this->attr('id', $id);	
+		return $this;
 	}
-
-	
-
+	/**
+	 * Sets attribute by name / value pairs.
+	 * @param string $name Name of the attribute
+	 * @param mixed $val Value of the attribute
+	 * @return reks\form\Element
+	 */
+	public function attr($name, $val){
+		$this->attr[$name] = $val;
+		return $this;
+	}
+	/**
+	 * Removes a attribute
+	 * @param string $name Name of the attribute
+	 * @return reks\form\Element
+	 */
+	public function removeAttr($name){
+		unset($this->attr[$name]);
+		return $this;
+	}
+	/**
+	 * Gets a attribute's value.
+	 * @param string $name Name of the attribute.
+	 */
+	public function getAttr($name){
+		if (isset($this->attr[$name]))return $this->attr[$name];
+		return null;
+	}
+	/**
+	 * Returns a xml valid string of attirbutes.
+	 */
+	public function __toString(){
+		$str = '';
+		foreach($this->attr as $k => $v){
+			$str .= ' '.$k . '="'.(is_callable($v) && !is_string($v) ? $v() : $v).'"';
+		}
+		return $str;
+	}
 }

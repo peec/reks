@@ -1,8 +1,9 @@
 <?php
 namespace reks\tests;
 
+use \reks\router\RouteRule;
 
-class Router extends \reks\tester\TestCase{
+class Router extends \reks\controller\UnitTest{
 	/**
 	 * Router instance.
 	 * @var reks\Router
@@ -11,11 +12,11 @@ class Router extends \reks\tester\TestCase{
 	
 	public function setup(){
 		$config = array();
-		$this->router = new \reks\Router(
+		$this->router = new \reks\router\Router(
 			$this->app,
 			microtime(true),
 			$config,
-			new \reks\Log(0, $this->app->APP_PATH . '/logs'),
+			new \reks\core\Log(0, $this->app->APP_PATH . '/logs'),
 			'/'
 		);
 		
@@ -30,7 +31,7 @@ class Router extends \reks\tester\TestCase{
 		$this->router->setURI('/test');
 		
 		// Test getComponents.
-		$route = new \reks\RouteRule($this->router, '/test','One.index','*');
+		$route = new RouteRule($this->router, '/test','One.index','*');
 		list($controller, $method, $args) = $route->parseTo();
 		$this->assertEqual($controller, 'One');
 		$this->assertEqual($method, 'index');
@@ -48,7 +49,7 @@ class Router extends \reks\tester\TestCase{
 		$this->router->setURI('/one/two');
 		
 		
-		$route = new \reks\RouteRule($this->router, '/@one/@t','Two.two(@one    ,  	@t)','*');
+		$route = new RouteRule($this->router, '/@one/@t','Two.two(@one    ,  	@t)','*');
 		list($controller, $method, $args) = $route->parseTo();
 		
 		$this->assertEqual($controller, 'Two');
@@ -74,7 +75,7 @@ class Router extends \reks\tester\TestCase{
 	public function testRouteThree(){
 		$this->router->setURI('/123456789/12345');
 		
-		$route = new \reks\RouteRule($this->router, '/@reg<\d+>/@exp<[0-5]*>','Three.three(@exp, @reg)','*');
+		$route = new RouteRule($this->router, '/@reg<\d+>/@exp<[0-5]*>','Three.three(@exp, @reg)','*');
 		list($controller, $method, $args) = $route->parseTo();
 		
 		$this->assertEqual($controller, 'Three');

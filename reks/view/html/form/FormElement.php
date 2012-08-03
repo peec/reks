@@ -29,40 +29,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @license 3-clause BSD
- * @package reks
+ * @package reks\form
  * @author REKS group at Telemark University College
  */
-namespace reks\repo;
+namespace reks\view\html\form;
 
-/**
- * All models should extend this super class.
- *
- * @author REKS group at Telemark University College
- * @version 1.0
- *
- */
-class PDORepo extends ARepo{
-
-
+class FormElement extends Element{
 	/**
-	 * Database instance.
-	 * @var reks\dbal\DBAL
+	 * 
+	 * Enter description here ...
+	 * @var reks\form\Form
 	 */
-	public $db;
+	protected $form;
 	
+	protected $name;
 	
-
-	public function setup(Repository $repo){
-		parent::setup($repo);
-		$dbconfig = $repo->config['db'];
-		$this->db = $repo->sharedResource(
-				get_class(),
-				function() use($dbconfig){
-					return new \reks\dbal\DBAL($dbconfig['dsn'], $dbconfig['username'], $dbconfig['password'], $dbconfig['driver_options']);
-				}
-		);
+	protected $rememberData = false;
+	
+	public function __construct(&$form, $name= null){
+		$this->form = &$form;
+		$this->name = $name;
+		if ($name !== null){
+			$this->attr('name', $name);
+		}
 	}
-
 	
-
+	/**
+	 * Use to remember data.
+	 * @return reks\form\FormElement
+	 */
+	public function rememberData(){
+		$this->rememberData = true;
+		return $this;
+	}
+	
+	protected function realValue($name, $value){
+		$ui = null;
+		if ($this->form->input){
+			$ui = $this->form->input->$name;
+		}
+		if (
+			($this->form->rememberData || $this->rememberData) &&
+			$ui
+		){
+			// htmlentities to remove possible XSS attacks.
+			$val = $ui;
+			return $val ? $val : null;
+		}else{
+			return $value;
+		}
+	}
 }

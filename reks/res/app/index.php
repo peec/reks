@@ -6,6 +6,6 @@ $app_data_path = dirname(__FILE__) . '/../app-data.php';
 // -- Do not edit below --
 session_start();
 include $app_data_path;
-include $appData['base_reks'] . '/reks/App.php';
-$app = new \reks\App($appData);
+include $appData['base_reks'] . '/core/App.php';
+$app = new \reks\core\App($appData);
 $app->main();

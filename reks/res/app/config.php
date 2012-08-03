@@ -1,28 +1,26 @@
 <?php
-namespace reks;
-
-/**
- * Configuration array.
- * 
- * @var array
- */
+namespace reks\core; // Please don't change me.
 $config=array(); // Do not change me!
+
+
 
 /**
  * Application mode.
- * Either: 'dev' or 'prod'.
+ * Production or Development.
+ * 
+ * Either: App::APP_MODE_DEV or App::APP_MODE_PROD
  * @var string
  */
-$config['applicationMode'] = 'dev';
+$config['applicationMode'] = App::APP_MODE_DEV;
 
 /**
- * 
- * Enter description here ...
+ * The default language.
  * @var string
  */
 $config['language'] = 'en';
 
 
+////// DATABASE CONNECTIONS... Use what you like, Doctrine or simple PDO.
 
 /**
  * PDO Database configuration ( NO ORM )
@@ -68,6 +66,7 @@ $config['log_dir'] = $app->APP_PATH . '/logs';
  */
 $config['log_level'] = Log::E_ERROR | Log::E_INFO | Log::E_WARN;
 
+
 /**
  * Do we want to remove index.php from URL? 
  * In most cases YES, but we need external .htaccess file, not all servers
@@ -83,10 +82,6 @@ $config['remove_scriptpath'] = false;
 
 
 $config['route']['*']  = array(
-	
-		// Main page
-		'/'		=>			'Main.helloWorld',
-
-		
-		
+		// Main page.
+		'/'		=>			'Main.index',
 );

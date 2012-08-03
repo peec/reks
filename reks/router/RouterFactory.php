@@ -32,37 +32,58 @@
  * @package reks
  * @author REKS group at Telemark University College
  */
-namespace reks\repo;
+namespace reks\router;
+
+use reks\core\App,
+	reks\core\Module,
+	reks\core\Log;
+
 
 /**
- * All models should extend this super class.
- *
+ * Factory for initializing the Router.
+ * 
  * @author REKS group at Telemark University College
  * @version 1.0
- *
  */
-class PDORepo extends ARepo{
-
-
+class RouterFactory{
+	
+	
+	
 	/**
-	 * Database instance.
-	 * @var reks\dbal\DBAL
+	 * Creates a new router object inserting $_SERVER  and logger instances aswell as the current time started.
+	 * @param reks\App $app
+	 * @return reks\Router
 	 */
-	public $db;
-	
-	
-
-	public function setup(Repository $repo){
-		parent::setup($repo);
-		$dbconfig = $repo->config['db'];
-		$this->db = $repo->sharedResource(
-				get_class(),
-				function() use($dbconfig){
-					return new \reks\dbal\DBAL($dbconfig['dsn'], $dbconfig['username'], $dbconfig['password'], $dbconfig['driver_options']);
-				}
+	static public function create(App $app, Router $superRouter = null){
+		$router = new Router(
+			$app,	
+			microtime(true),
+			isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/'
 		);
+		$router->app->module = new Module($router);
+		
+		// Create module object so configuration can add modules.
+		$module = $app->module;
+		
+		
+		$confFile = $app->APP_PATH . '/config.php';
+		
+		$config = array('route' => array());
+		// Inheret config from super if any.
+		if ($superRouter){
+			$config = $superRouter->config;
+			$configHandler = $superRouter->app->configHandler;
+			if (file_exists($confFile))include $confFile;
+		}else{
+			// Include main config.
+			require $confFile;
+			$app->configHandler = isset($configHandler) ? $configHandler : null;
+		}
+		$router->setRoutes($config['route']);
+		$router->setConfig($config);
+		$router->setLog(new Log($config['log_level'], $config['log_dir']));
+		
+		return $router;
 	}
-
 	
-
 }

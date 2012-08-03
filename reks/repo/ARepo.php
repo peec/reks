@@ -11,7 +11,7 @@ abstract class ARepo{
 	
 	/**
 	 * Language instance.
-	 * @var reks\Lang
+	 * @var reks\i18n\Lang
 	 */
 	public $lang;
 	
@@ -23,13 +23,13 @@ abstract class ARepo{
 	
 	/**
 	 * Logger instance. Used to log application data.
-	 * @var reks\Log
+	 * @var reks\core\Log
 	 */
 	public $log;
 
 	/**
 	 *
-	 * @var reks\App
+	 * @var reks\core\App
 	 */
 	public $app;
 

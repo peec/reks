@@ -32,37 +32,64 @@
  * @package reks
  * @author REKS group at Telemark University College
  */
-namespace reks\repo;
+namespace reks\core;
 
 /**
- * All models should extend this super class.
- *
+ * Simple autoloader.
+ * 
  * @author REKS group at Telemark University College
  * @version 1.0
- *
  */
-class PDORepo extends ARepo{
-
-
+class Autoloader{
+	
 	/**
-	 * Database instance.
-	 * @var reks\dbal\DBAL
+	 * 
+	 * @var reks\App
 	 */
-	public $db;
+	private $app;
 	
-	
-
-	public function setup(Repository $repo){
-		parent::setup($repo);
-		$dbconfig = $repo->config['db'];
-		$this->db = $repo->sharedResource(
-				get_class(),
-				function() use($dbconfig){
-					return new \reks\dbal\DBAL($dbconfig['dsn'], $dbconfig['username'], $dbconfig['password'], $dbconfig['driver_options']);
-				}
-		);
+	/**
+	 * Factory method to load autoloader.
+	 * @param reks\App $app
+	 * 
+	 */
+	static public function create(App $app){
+		return new Autoloader($app);
 	}
-
 	
-
+	/**
+	 * Registers the autoloader method.
+	 * @param reks\App $app
+	 */
+	public function __construct(App $app){
+		$this->app = $app;
+		spl_autoload_register(array($this, 'loader'));
+	}
+	
+	/**
+	 * This is the simple autoloader for the REKS framework.
+	 * This is possible because we use namespaces to refer to folder names / class names.
+	 *
+	 * PHP calls this method, this should never be used!!
+	 *
+	 * @param string $className Full class name including namespace.
+	 */
+	public function loader($className){
+		if (substr($className, 0, 1) == '\\')$className = substr($className, 1);
+		
+		if (substr($className, 0, 5) == 'reks\\'){
+			$file = $this->app->BASE_REKS;
+			$className = substr($className, 5); // reks\ should not be included.
+		}else{
+			$file = $this->app->APP_PATH;
+		}
+		
+		$file .= 
+		 DIRECTORY_SEPARATOR
+		 . str_replace('\\',DIRECTORY_SEPARATOR, $className)
+		 .'.php';
+		
+		if (file_exists($file))include $file;
+	}
+	
 }

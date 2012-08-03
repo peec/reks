@@ -1,7 +1,7 @@
 <?php
 namespace controller;
 
-class MyModule extends \reks\Controller{
+class MyModule extends \reks\controller\Controller{
 	
 	public function test(){
 		

@@ -1,4 +1,4 @@
 <?php
-require_once dirname(__FILE__).'/../reks/CommandLine.php';
+require_once dirname(__FILE__).'/../reks/cli/CommandLine.php';
 
-\reks\CommandLine::reksCommandLine(dirname(__FILE__));
+\reks\cli\CommandLine::reksCommandLine(dirname(__FILE__));
