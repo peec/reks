@@ -9,8 +9,6 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 	public function helloWorld(){
 		
 		
-		
-		
 		// Test database ...
 		// 1. Configurure db_doctrine configuration in config.php.
 		// 2. Create a database ( with the above configuration )
@@ -40,8 +38,6 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 			
 		}
 		
-		
-		
 		// Assign $header to get a specific value.
 		$this->view->assign('header', 'REKS Framework!');
 		
@@ -50,8 +46,10 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 		$this->view->html->title('Hello World');
 		
 		// Render a view file.
-		$this->view->render('helloworld');
+		$this->view->render('helloworld.twig.html');
 	}
+	
+	
 	
 	
 	public function hello($to){

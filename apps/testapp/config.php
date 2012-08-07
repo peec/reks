@@ -102,15 +102,7 @@ $config['route']['*']  = array(
 		'/dev/unittest-framework' =>  '/reks/tests/Main.index',
 		
 		
-		
-		// Error handlers
-		'500'		=>		'Errors.internalServerError',
-		'404'		=>		'Errors.pageNotFound',
-		
-		
 );
-
-
 
 
 

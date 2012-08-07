@@ -10,7 +10,6 @@ class JsCompiler extends Compiler{
 	
 	private $jsScripts = array();
 	
-	private $jsRoutes = false;
 	
 	/**
 	 * Use BEFORE <script> tags in middle of content
@@ -45,29 +44,29 @@ class JsCompiler extends Compiler{
 		return $this->view->url->encryption()->encode($str);
 	}
 	
-	public function display(){
+	
+	public function get(){
+		$ret = '';
+		$ret .= $this->show($this->view->url->reverse('/reks/controller/JSController.routes'));
 		
-		if ($this->jsRoutes){
-			echo $this->show($this->view->url->reverse('/reks/controller/JSController.routes'));
-		}
-		if ($this->view->app->inProduction()){ // @todo FIX.
-			echo $this->show($this->view->url->reverse('/reks/controller/JSController.cacheRoutes') . "?cacheRoutes={$this->encodeJavascripts()}");
+		if ($this->view->app->inProduction()){
+			$ret .= $this->show($this->view->url->reverse('/reks/controller/JSController.cacheRoutes') . "?cacheRoutes={$this->encodeJavascripts()}");
 		}else{
-			echo $this->render();
+			$ret .= $this->render();
 		}
-		echo $this->render(); // Render the rest of non cached scripts.
+		$ret .= $this->render(); // Render the rest of non cached scripts.
 		
 		// Render <script> tags.
 		foreach($this->jsScripts as $content){
-			echo $content;
+			$ret .= $content;
 		}
+		return $ret;
 	}
 	
-	
-	public function addJsRoutes(){
-		$this->jsRoutes = true;
-		return $this;
+	public function display(){
+		echo $this->get();
 	}
+	
 	
 	public function show($src){
 		return '<script type="text/javascript" src="'.$src.'"></script>';

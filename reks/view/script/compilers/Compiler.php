@@ -104,11 +104,16 @@ abstract class Compiler{
 	}
 	
 	
-	public function display(){
+	public function get(){
+		$ret = '';
 		if ($this->view->app->inProduction()){
-			echo $this->cache();
+			$ret .=  $this->cache();
 		}
-		echo $this->render();
+		$ret .= $this->render();
+		return $ret;
+	}
+	public function display(){
+		echo $this->get();
 	}
 	
 	

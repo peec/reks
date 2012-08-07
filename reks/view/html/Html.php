@@ -57,7 +57,7 @@ class Html{
 	 * @param string $canonical The internal link. Example: news/1/hi-there
 	 */
 	public function canonical($canonical){
-		$canonical = $this->view->stripXSS($canonical);
+		$canonical = $this->view->escape($canonical);
 		$this->html['canonical'] = '<link rel="canonical" href="'.$this->view->url->fetchDomain() . $canonical.'" />';
 		return $this;
 	}
@@ -66,7 +66,7 @@ class Html{
 	 * @param string $description A string giving description of the current page. If its over 160 chars it will be truncated.
 	 */
 	public function description($description){
-		$description = $this->view->stripXSS($description);
+		$description = $this->view->escape($description);
 		$description = substr($description,0,160);
 		$this->html['meta.description'] = '<meta name="description" content="'.$description.'" />';
 		return $this;
@@ -77,7 +77,7 @@ class Html{
 	 * @param boolean $clean true to clean the keyword array.
 	 */
 	public function keyword($keywords, $clean=false){
-		$keywords = $this->view->stripXSS($keywords);
+		$keywords = $this->view->escape($keywords);
 		if ($clean)$this->html['meta.keywords'] = array();
 		if (is_array($keywords)){
 			if (!isset($this->html['meta.keywords']))$this->html['meta.keywords'] = array();
@@ -97,7 +97,7 @@ class Html{
 	 * @param int Used for url to next / prev page. Note sprintf is used! Example: $url news/1/title?page=%d OR news/1/title/page/%d
 	 */
 	public function pagination($pageAmount, $curPage, $url){
-		$url = $this->view->stripXSS($url);
+		$url = $this->view->escape($url);
 		if (!isset($this->html['pagination']))$this->html['pagination'] = '';
 		if ($curPage != $pageAmount && $pageAmount != 1)$this->html['pagination'] .= '<link rel="next" href="'.$this->view->url->fetchDomain() .sprintf($url, $curPage+1).'" />';
 		if ($curPage != 1)$this->html['pagination'] .= '<link rel="prev" href="'.$this->view->url->fetchDomain() . sprintf($url, $curPage-1).'" />';
@@ -116,7 +116,7 @@ class Html{
 	 * @param boolean $prepend Default is true, it will prepend title. This is best practice SEO
 	 */
 	public function title($title, $prepend=true){
-		$title = $this->view->stripXSS($title);
+		$title = $this->view->escape($title);
 		if ($prepend){
 			if (isset($this->html['title']))array_unshift($this->html['title'],$title);
 			else $this->html['title'] = array($title);

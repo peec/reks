@@ -41,7 +41,7 @@ class CommandLine{
 		
 		$commands = array(
 			new commands\app\PrepareProduction("prepare-production"),	
-				
+			new commands\app\SecurityCheck("security-check")	
 		);
 		
 		foreach($commands as $k => $c){

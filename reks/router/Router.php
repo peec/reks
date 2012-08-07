@@ -133,6 +133,10 @@ class Router{
 				$this->routes[] = new RouteRule($this, $from, $to, $type);
 			}
 		}
+		
+		$this->routes[] = new RouteRule($this, '404', '/reks/controller/RouteErrorHandler.pageNotFound', '*');
+		$this->routes[] = new RouteRule($this, '500', '/reks/controller/RouteErrorHandler.internalServerError', '*');
+		
 	}
 	public function setConfig(\reks\core\Config $config){
 		$this->config = $config;
@@ -228,7 +232,10 @@ class Router{
 			$commandline->run();
 		}else{
 			$ok = $this->routeTrigger();
-			if (!$ok)$this->trigger('404', null, array(), 404);
+			if (!$ok){
+				$c = $this->trigger('404', null, array(), 404);
+				
+			}
 		}
 	}
 	
@@ -251,15 +258,11 @@ class Router{
 		$this->app->module->preload();
 		
 		$status = false;
-		try{
+		
 			if ($components = $this->dispatch()){
 				list ($controller, $method, $args) = $components;
-				try{
-					$this->load($controller, $method, $args);
-					return true;
-				}catch(InternalServerError $e){
-					$c = $this->trigger('500', null, array('message' => $e->getMessage()), 500);
-				}
+				$this->load($controller, $method, $args);
+				return true;
 			}else {
 				// On exception lets check routing of modules.
 				if (count($this->app->module->modules) > 0){
@@ -273,17 +276,6 @@ class Router{
 					}
 				}
 			}
-		}catch(\Exception $e){
-			$this->log->error($e->getMessage());
-				
-			echo "
-			<h1>".get_class($e)."</h1>
-			<p><strong>Message:</strong><br />{$e->getMessage()}</p>
-			<p><strong>Stack:</strong><br />{$e->getTraceAsString()}</p>
-			";
-				
-			$status = false;
-		}
 		return $status;
 	}
 	
@@ -382,14 +374,16 @@ class Router{
 			$c->view->assign($key, $val);
 		}
 		
-		if (is_array($args) && count($args) > 0){
-			$result = call_user_func_array(array($c, $method), $args);
-		}else $result = $c->$method();
-
-		if ($result && $result instanceof Response){
+		try{
+			if (is_array($args) && count($args) > 0){
+				$result = call_user_func_array(array($c, $method), $args);
+			}else $result = $c->$method();
+		}catch(\Exception $e){
+			$this->log->error("Exception from controller $controller::$method : ".$e->getMessage());
+			return $this->trigger('500', null, array('con' => $controller, 'me' => $method, 'ex' => $e, 'code' => 500));
+		}
+		if (isset($result) && $result && $result instanceof Response){
 			$result->setView($this->getResource(App::RES_VIEW));
-
-			
 			$result->execute();
 			
 		}

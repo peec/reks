@@ -170,7 +170,10 @@ EOT
 				'view' => array(
 							'index.php' => function($input){
 								return file_get_contents(ReksData::getReksPath() . '/res/app/view.php');
-							}
+							},
+							'index.twig.html' => function($input){
+								return file_get_contents(ReksData::getReksPath() . '/res/app/view.twig.html');
+							}, 
 						),
 				'controller' => array(
 							'Main.php' => function($input){
