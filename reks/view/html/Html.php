@@ -117,6 +117,7 @@ class Html{
 	 */
 	public function title($title, $prepend=true){
 		$title = $this->view->escape($title);
+
 		if ($prepend){
 			if (isset($this->html['title']))array_unshift($this->html['title'],$title);
 			else $this->html['title'] = array($title);
@@ -127,15 +128,23 @@ class Html{
 		return $this;
 	}
 	
+	
 	/**
-	 * Returns the content of all tags that should be added with the methods used 
-	 * in this class.
-	 * Use like 
+	 * Use like
 	 * <code>
 	 * echo $view->head;
 	 * </code>
+	 * @return Ambigous <string, unknown>
+	 * @see reks\view\html\Html.compile
 	 */
 	public function __toString(){
+		return $this->compile();
+	}
+	/**
+	 * Returns the content of all tags that should be added with the methods used
+	 * in this class.
+	 */
+	public function compile(){
 		$html = '';
 		foreach($this->html as $type => $c){
 			switch($type){
@@ -161,8 +170,8 @@ class Html{
 	 * Initializes the head class
 	 * @param reks\View $view The view instance.
 	 */
-	public function __construct($view){
-		$this->view = $view;
+	public function __construct(\reks\view\View &$view){
+		$this->view = &$view;
 	}
 	
 	

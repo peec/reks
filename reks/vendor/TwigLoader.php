@@ -31,7 +31,7 @@ class TwigLoader extends Loader{
 	 * @see \reks\vendor\Loader::configure()
 	 */
 	public function configure(\reks\core\Config $cnf){
-		$def = array();
+		$def = array('charset' => 'utf-8');
 		if ($this->app->inProduction()){
 			$def['cache'] = $this->app->APP_PATH . '/cache/twig/php';
 		}else{
@@ -43,8 +43,9 @@ class TwigLoader extends Loader{
 		
 		
 		$this->twig = new \Twig_Environment($this->loader, array_merge($def, $cnf['twig']));
-		
+
 		$view = $this->app->internalRouter->getResource(App::RES_VIEW);
+
 		$this->twig->addExtension(new \reks\view\twig\Extension($view));
 	}
 	

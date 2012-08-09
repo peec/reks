@@ -103,7 +103,7 @@ class View{
 	const CSRF_TOKEN_NAME = 'csrf_token_';
 	
 	/**
-	 * @var reks\view\Html HTML instance, manipulate the html.
+	 * @var reks\view\html\Html HTML instance, manipulate the html.
 	 */
 	public $html;
 	
@@ -146,13 +146,13 @@ class View{
 		$this->form = new html\form\FormWrapper;
 		
 		$this->url = $url;
-		$this->html = new html\Html($this);
 		$this->app = $app;
 		$this->router = $router;
 		$this->scripts = new script\Scripts($this);
 
 		$self = $this;
-		
+
+		$this->html = new html\Html($this);
 		
 		// Assign core vars;
 		$this->viewVars['out'] = function($var) use($self){

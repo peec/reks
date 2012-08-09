@@ -40,8 +40,7 @@ class CommandLine{
 		$appname = $this->router->app->APP_NAME;
 		
 		$commands = array(
-			new commands\app\PrepareProduction("prepare-production"),	
-			new commands\app\SecurityCheck("security-check")	
+			new commands\app\PrepareProduction("prepare-production")	
 		);
 		
 		foreach($commands as $k => $c){

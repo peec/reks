@@ -6,12 +6,19 @@ use \reks\view\View;
 
 class Asset_Node extends \Twig_Node{
 	protected $view;
-	public function __construct(View $view, $name, $value, $lineno, $tag = null){
-		parent::__construct(array(), array('value' => $value, 'name' => $name), $lineno, $tag);
+	public function __construct(View $view, $name, $value, $addCompile,  $lineno, $tag = null){
+		parent::__construct(array(), array('value' => $value, 'name' => $name, 'addCompile' => $addCompile), $lineno, $tag);
 		$this->view = $view;
 	}
 
 	public function compile(\Twig_Compiler $compiler){
-		$this->view->scripts->{$this->getAttribute('name')}->add($this->getAttribute('value')); // Add asset.
+		$addCompile = $this->getAttribute('addCompile') ? 'true' : 'false';
+		
+		$code = "\$context['view']->scripts->".$this->getAttribute('name')."->add('".$this->getAttribute('value')."', ".$addCompile.");\n";
+
+		$compiler
+		->addDebugInfo($this)
+		->write($code)
+		;
 	}
 }

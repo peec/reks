@@ -1,21 +1,16 @@
 <?php
 namespace reks\view\twig;
 
-class Extension extends \Twig_Extension{
-
-	
-	/**
-	 * 
-	 * @var reks\view\View
-	 */
-	private $view;
-	
-	public function __construct($view){
-		$this->view = $view;
-	}
+class Extension extends AExtension{
 	
 	public function getName(){
 		return "REKS Framework";
+	}
+	
+	public function getFilters(){
+		return array(
+				'truncate' => new \Twig_Filter_Method($this, 'f_truncate'),
+				);
 	}
 	
 	public function getTokenParsers(){
@@ -49,15 +44,29 @@ class Extension extends \Twig_Extension{
 		if ($type == 'js' || $type == 'css'){
 			return $this->view->scripts->$type->get();
 		}elseif($type == 'head'){
-			return $this->view->html->__toString();	
-		}else throw new \Exception("There is no type of script $type, please provide a valid type such as 'js' or 'css'.");
+			$raw = (string)$this->view->html->compile();
+			return $raw;	
+		}else{
+			throw new \Exception("There is no type of script $type, please provide a valid type such as 'js' or 'css'.");
+		}
 	}
 	
 	public function asset($src){
 		return $this->view->url->asset($src);
 	}
 	
-	public function lang($var){
-		return $this->view->lang->$var;
+	public function lang($var, $args = null){
+		$var = $this->view->lang->$var;
+		
+		if ($args)return (string) $var->args($args);
+		else return (string)$var;
+	}
+	
+	public function f_truncate($string, $num, $after = ''){
+		if (strlen($string) > $num){
+			return substr($string, 0, $num) . $after;
+		}else{
+			return $string;
+		}
 	}
 }
