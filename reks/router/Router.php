@@ -162,7 +162,7 @@ class Router{
 		
 		if (PHP_SAPI == 'cli'){
 			
-			$commandline = new \reks\cli\CommandLine($this);
+			$commandline = new \reks\cli\CommandLine($this->app);
 			$commandline->run();
 		}else{
 			$ok = $this->routeTrigger();

@@ -9,9 +9,9 @@ use \reks\router\Router;
 class CommandLine{
 	/**
 	 * 
-	 * @var reks\router\Router
+	 * @var reks\core\App
 	 */
-	private $router;
+	private $app;
 	
 	/**
 	 * 
@@ -19,11 +19,11 @@ class CommandLine{
 	 */
 	private $set;
 	
-	public function __construct(Router $r){
-		$this->router = $r;
+	public function __construct(\reks\core\App $r){
+		$this->app = $r;
 		
 		
-		$em = $this->router->app->model->_reks_repo_DoctrineRepo->em;
+		$em = $this->app->model->_reks_repo_DoctrineRepo->em;
 		
 		// Set the helpers needed.
 		$this->set = new \Symfony\Component\Console\Helper\HelperSet(array(
@@ -37,14 +37,14 @@ class CommandLine{
 	
 	public function run(){
 		
-		$appname = $this->router->app->APP_NAME;
+		$appname = $this->app->APP_NAME;
 		
 		$commands = array(
 			new commands\app\PrepareProduction("prepare-production")	
 		);
 		
 		foreach($commands as $k => $c){
-			$commands[$k] = commands\app\AppCommand::appCommandFactory($c, $this->router->app);
+			$commands[$k] = commands\app\AppCommand::appCommandFactory($c, $this->app);
 		}
 		
 		\Doctrine\ORM\Tools\Console\ConsoleRunner::run($this->set, $commands);
