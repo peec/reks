@@ -45,7 +45,8 @@ use reks\http\Url,
 	reks\http\Request,
 	reks\http\Response,
 	reks\core\Log,
-	reks\router\ActiveRoute;
+	reks\router\ActiveRoute,
+	reks\core\App;
 
 /**
  * All controllers in the application should EXTEND this super class.
@@ -189,8 +190,8 @@ abstract class Controller{
 	 * @param reks\router\ActiveRoute Active route object.
 	 * @return reks\controller\Controller
 	 */
-	static public function init(Router $r, \reks\core\Config $config, $controller, Url $url, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute = null){
-		$c = new $controller($config, $r, $url, $lang, $ui, $csrf, $view, $request, $log, $repo, $activeRoute);
+	static public function init($controller, App $app){
+		$c = new $controller($app->config, $app->router, $app->url, $app->lang, $app->ui, $app->csrf, $app->view, $app->request, $app->log, $app->model, $app->router->activeRoute);
 		$c->setup();
 		return $c;
 	}

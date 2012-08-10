@@ -1,6 +1,8 @@
 <?php
 namespace reks\tests;
 
+use reks\core\Config;
+
 use \reks\router\RouteRule;
 
 class Router extends \reks\controller\UnitTest{
@@ -14,20 +16,15 @@ class Router extends \reks\controller\UnitTest{
 		$config = array();
 		$this->router = new \reks\router\Router(
 			$this->app,
-			microtime(true),
-			$config,
-			new \reks\core\Log(0, $this->app->APP_PATH . '/logs'),
 			'/'
 		);
 		
+		$this->router->setRoutes(new Config($config));
+		
 	}
 	
-	/**
-	 * @expect exception \Exception
-	 * @throws \Exception
-	 */
+	
 	public function testRouteOne(){
-		throw new \Exception(":Pp.PP:P:P:Pp.p.pp:P.pp.P::P.p");
 		$this->router->setURI('/test');
 		
 		// Test getComponents.

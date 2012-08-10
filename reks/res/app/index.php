@@ -7,5 +7,5 @@ $app_data_path = dirname(__FILE__) . '/../app-data.php';
 session_start();
 include $app_data_path;
 include $appData['base_reks'] . '/core/App.php';
-$app = new \reks\core\App($appData);
+$app = \reks\core\App::fresh($appData);
 $app->main();

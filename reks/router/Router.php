@@ -35,7 +35,6 @@
 namespace reks\router;
 
 use reks\core\App,
-reks\core\Module,
 reks\core\Log,
 reks\controller\Controller,
 reks\http\Response;
@@ -53,27 +52,6 @@ reks\http\Response;
  *
  */
 class Router{
-	/**
-	 * Array of configuration from config.php
-	 * @var reks\core\Config
-	 */
-	public $config;
-
-
-	/**
-	 * The starting time of the constructor of the Router in float microtime.
-	 * @var float
-	 */
-	private $startTime;
-
-
-	/**
-	 * Logger instance. Used to log application data.
-	 * @var reks\core\Log
-	 */
-	public $log;
-
-	
 	
 	/**
 	 * Array of routes.
@@ -82,10 +60,9 @@ class Router{
 	public $routes = array();
 	
 	/**
-	 * Path info reference for the URL.
 	 * This should be "/" for main page ( no arguments in the url )
 	 * Ususally $_SERVER['PATH_INFO'] is just correct to pass into this variable.
-	 * @var string
+	 * @var string Path info reference for the URL.
 	 */
 	public $uri;
 	
@@ -104,24 +81,16 @@ class Router{
 	 */
 	public $activeRoute;
 	
-	private $sharedResources = array();
-	
-	private $globalResources = array();
-	
 	
 	
 	/**
 	 * Constructs the router values.
 	 */
-	public function __construct(App $app, $startTime, $pathInfo){
+	public function __construct(App $app, $pathInfo){
 		$this->app = $app;
-		$this->startTime = $startTime;
 		$this->uri = $pathInfo;
 	}
 	
-	public function setLog(Log $log){
-		$this->log = $log;
-	}
 	public function setRoutes(\reks\core\Config $routes){
 		// Add built in routes.
 		$this->routes[] = new RouteRule($this, '/jsroutes', '/reks/controller/JSController.routes', 'get');
@@ -138,41 +107,6 @@ class Router{
 		$this->routes[] = new RouteRule($this, '500', '/reks/controller/RouteErrorHandler.internalServerError', '*');
 		
 	}
-	public function setConfig(\reks\core\Config $config){
-		$this->config = $config;
-	}
-	
-	public function getResources(){
-		return $this->sharedResources;
-	}
-	public function setResource($name, $val){
-		$this->sharedResources[$name] = $val;
-	}
-	public function getResource($name){
-		if(isset($this->sharedResources[$name])){
-			return $this->sharedResources[$name];
-		}else{
-			throw new \Exception("REKS Framework asked for resources '$name', but it did not exist.");
-		}
-	}
-	
-	public function getGlobalResources(){
-		return $this->globalResources;
-	}
-	
-	public function setGlobalResource($name, $val){
-		$this->globalResources[$name] = $val;
-	}
-	
-	public function getGlobalResource($name){
-		if(isset($this->globalResources[$name])){
-			return $this->globalResources[$name];
-		}else{
-			throw new \Exception("REKS Framework asked for global resource '$name', but it did not exist.");
-		}
-	}
-	
-	
 	
 	/**
 	 * Sets the uri.
@@ -221,7 +155,7 @@ class Router{
 	 */
 	public function route(){
 
-		ob_start("ob_gzhandler"); // Start Gunzip.
+		
 		
 		// Parse in prod.
 		$this->getCachedRouteRules();
@@ -240,7 +174,7 @@ class Router{
 	}
 	
 	protected function getCachedRouteRules(){
-		$file = $this->app->getRoutesCacheFile();
+		$file = $this->app->files->getRoutesCacheFile();
 		
 		if ($this->app->inProduction() && file_exists($file)){
 			include $file;
@@ -255,27 +189,13 @@ class Router{
 	 * Tries to route to locations.
 	 */
 	public function routeTrigger(){
-		$this->app->module->preload();
-		
 		$status = false;
 		
-			if ($components = $this->dispatch()){
-				list ($controller, $method, $args) = $components;
-				$this->load($controller, $method, $args);
-				return true;
-			}else {
-				// On exception lets check routing of modules.
-				if (count($this->app->module->modules) > 0){
-					foreach($this->app->module->modules as $mod){
-						try{
-							$status = $mod->getTargetRouter()->routeTrigger();
-							if($status)return true;
-						}catch(\Exception $e){
-							$status = false;
-						}
-					}
-				}
-			}
+		if ($components = $this->dispatch()){
+			list ($controller, $method, $args) = $components;
+			$this->load($controller, $method, $args);
+			return true;
+		}
 		return $status;
 	}
 	
@@ -288,7 +208,7 @@ class Router{
 			if ($requestType == $route->getType()  || $route->getType() == '*'){
 				if ($r = $route->compare()){
 					// Set active route.
-					$this->activeRoute = new ActiveRoute($this->getResource(App::RES_URL), $route, $r);
+					$this->activeRoute = new ActiveRoute($this->app->url, $route, $r);
 					return $r;
 				}
 			}
@@ -349,18 +269,8 @@ class Router{
 		// Components....
 		
 		$c = Controller::init(
-			$this, 
-			$this->config, 
-			$controller, 
-			$this->getResource(App::RES_URL), 
-			$this->getResource(App::RES_LANG), 
-			$this->getResource(App::RES_UI), 
-			$this->getResource(App::RES_CSRF), 
-			$this->getResource(App::RES_VIEW), 
-			$this->getResource(App::RES_REQUEST), 
-			$this->log, 
-			$this->getResource(App::RES_REPOSITORY),
-			$this->activeRoute
+			$controller,
+			$this->app
 		);
 				
 		
@@ -368,7 +278,7 @@ class Router{
 			$c->sendStatus($statusCode);
 		}
 		
-		$this->log->debug("Loaded $controller::$method");
+		$this->app->log->debug("Loaded $controller::$method");
 		
 		foreach($assignVars as $key => $val){
 			$c->view->assign($key, $val);
@@ -379,11 +289,11 @@ class Router{
 				$result = call_user_func_array(array($c, $method), $args);
 			}else $result = $c->$method();
 		}catch(\Exception $e){
-			$this->log->error("Exception from controller $controller::$method : ".$e->getMessage());
+			$this->app->log->error("Exception from controller $controller::$method : ".$e->getMessage());
 			return $this->trigger('500', null, array('con' => $controller, 'me' => $method, 'ex' => $e, 'code' => 500));
 		}
 		if (isset($result) && $result && $result instanceof Response){
-			$result->setView($this->getResource(App::RES_VIEW));
+			$result->setView($this->app->view);
 			$result->execute();
 			
 		}
@@ -408,12 +318,6 @@ class Router{
 	
 	
 
-	/**
-	 * Gets execution time at this time.
-	 */
-	public function getExecutionTime(){
-		return microtime(true) - $this->startTime;
-	}
 
 }
 

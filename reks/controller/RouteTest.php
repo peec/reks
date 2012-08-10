@@ -34,6 +34,8 @@
  */
 namespace reks\controller;
 
+use reks\core\Config;
+
 /**
  * Routes tester controller.
  * Add this to your route configuration and test all your routes files for syntax errors in one click.
@@ -48,9 +50,7 @@ class RouteTest extends Controller{
 	
 	public function index(){
 		
-		$router = \reks\router\RouterFactory::create($this->app);
-		
-		
+		$router = \reks\router\RouterFactory::create($this->app, new Config(array()));
 		
 		try{
 			$router->testRoutes();

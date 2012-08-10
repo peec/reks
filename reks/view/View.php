@@ -115,11 +115,6 @@ class View{
 	protected $viewQueue = array();
 	
 	
-	/**
-	 * Router instance. Private.
-	 * @var reks\router\Router
-	 */
-	public $router;
 	
 	/**
 	 * Deal with scripts ( JS and CSS )
@@ -140,14 +135,13 @@ class View{
 	 * Constructs a new view object.
 	 * @param array $config Global configuration.
 	 */
-	public function __construct(\reks\core\Config $config, Lang $lang, $url, App $app, Router $router){
-		$this->config = $config;
-		$this->lang = $lang;
+	public function __construct(App $app){
+		$this->config = $app->config;
+		$this->lang = $app->lang;
 		$this->form = new html\form\FormWrapper;
 		
-		$this->url = $url;
+		$this->url = $app->url;
 		$this->app = $app;
-		$this->router = $router;
 		$this->scripts = new script\Scripts($this);
 
 		$self = $this;
@@ -158,9 +152,9 @@ class View{
 		$this->viewVars['out'] = function($var) use($self){
 			$self->out($var);
 		};
-		$this->viewVars['url'] = $url;
+		$this->viewVars['url'] = $app->url;
 		$this->viewVars['view'] = $this;
-		$this->viewVars['lang'] = $lang;
+		$this->viewVars['lang'] = $app->lang;
 		
 	}
 
@@ -349,25 +343,34 @@ class View{
 		return $this->viewVars;
 	}
 	
-	/**
-	 * Returns a modules view instance.
-	 * @param string $name Module name
-	 * @return reks\View
-	 */
-	public function mod($name){
-		return $this->app->module->get($name)->getTargetRouter()->getResource(App::RES_VIEW);
-	}
-
-	/**
-	 * Returns the super application ( parent application ) View
-	 * @return reks\View
-	 */
-	public function super(){
-		return $this->app->superRouter->getResource(App::RES_VIEW);
-	}
 	
 	public function getExecutionTime(){
-		return $this->router->getExecutionTime();
+		return $this->app->getExecutionTime();
+	}
+	
+	/**
+	 * Returns a child View instance.
+	 * @param string $appName The application name.
+	 * @return reks\view\View
+	 */
+	public function childView($appName){
+		return $this->app->childApp($appName)->view;
+	}
+	/**
+	 * Returns a parent View instance.
+	 * @param string $appName The application name.
+	 * @return reks\view\View
+	 */
+	public function parentView($appName){
+		return $this->app->parentApp($appName)->view;
+	}
+	/**
+	 * Returns a super View instance.
+	 * @param string $appName The application name.
+	 * @return reks\view\View
+	 */
+	public function superView(){
+		return $this->app->superApp()->view;
 	}
 	
 	

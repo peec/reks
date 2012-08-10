@@ -5,7 +5,7 @@ class Main extends \reks\controller\UnitTest{
 	
 	public function setup(){
 		$this->addTest('\reks\tests\Router');
-		
+		$this->addTest('\reks\tests\AppTest');
 	}
 	
 }

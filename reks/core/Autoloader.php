@@ -50,7 +50,7 @@ class Autoloader{
 	
 	/**
 	 * Factory method to load autoloader.
-	 * @param reks\App $app
+	 * @param reks\core\App $app
 	 * 
 	 */
 	static public function create(App $app){

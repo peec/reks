@@ -1,2 +1,2 @@
 <?php
-$view->super()->assign('test', 'value');
+$view->superView()->assign('test', 'value');

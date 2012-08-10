@@ -34,6 +34,10 @@
  */
 namespace reks\controller;
 
+use reks\core\Config;
+
+use reks\core\App;
+
 use reks\router\RouterFactory;
 
 /**
@@ -72,6 +76,7 @@ abstract class UnitTest extends Controller{
 	}
 
 
+	
 
 	/**
 	 * Adds a new test controller to this instance.
@@ -88,7 +93,7 @@ abstract class UnitTest extends Controller{
 	final public function runTests(){
 
 		// Create a new router.
-		$r = RouterFactory::create($this->app);
+		$r = RouterFactory::create($this->app, new Config(array()));
 
 
 		$result = new TestResult();
@@ -96,7 +101,7 @@ abstract class UnitTest extends Controller{
 
 		foreach($this->testcontrollers as $controller){
 			if (!($controller instanceof UnitTest)){
-				$controller = Controller::init($r, $this->config, $controller, $this->url, $this->lang, $this->ui, $this->csrf, $this->view, $this->request, $this->log, $this->model, $this->activeRoute);
+				$controller = Controller::init($controller, $this->app);
 			}
 			// Note: Recursive call.
 			$result->add($controller->runTests());

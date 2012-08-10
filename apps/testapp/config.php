@@ -106,57 +106,7 @@ $config['route']['*']  = array(
 
 
 
-// Register a module
-$module->register(
-		dirname(__FILE__).'/../mymodule/app-data.php', 
-		Module::INHERIT_DATABASE );
-
-
-// This is just example of DB load modules...
-// Register a DB handler ( Note, you need database table , uncomment if you dont want it )
-// CREATE TABLE `modules` (module_id int(11)  PRIMARY KEY AUTO_INCREMENT, module_name varchar(255), module_flags int(11), active boolean);
-// Also create folder "modules".
-/*$module->registerHandler(function(\reks\Module $module, \reks\RawModel $db){
-	try{
-		$db->openDB();
-		$rows = $db->select("SELECT module_name, module_flags, active FROM modules");
-		foreach($rows as $row){
-			$module->register(
-					$module->owner->app->APP_PATH . "/modules/{$row['module_name']}/app-data.php", 
-					\reks\Module::INHERIT_DATABASE
-			);
-		}
-	}catch(\PDOException $e){
-		// Dont do anything.
-	}
-	
-});
-*/
-
-// This is just example of DB load config ...
-// - This is also using the table from the above example.
-// Register a DB handler ( Note, you need database table , uncomment if you dont want it )
-// CREATE TABLE `configuration` (module_id int(11), conf_key varchar(255), conf_val TEXT, PRIMARY KEY(module_id, conf_key), FOREIGN KEY (module_id) REFERENCES modules(module_id));
-
-
-/*
-$configHandler = function(\reks\RawModel $db) use ($config){
-	try{
-		$db->openDB();
-		$rows = $db->select("
-				SELECT
-					conf_key, conf_val, module_name
-				FROM configuration
-				INNER JOIN modules ON modules.module_id = configuration.module_id
-				WHERE module_name = ?
-				", array($db->app->APP_NAME));
-		foreach($rows as $row){
-			$config[$row['conf_key']] = $row['conf_val'];
-		}
-	}catch(\PDOException $e){
-		// Dont do anything.
-	}
-	return $config;
-};
-
-*/
+// Register a module ( can be many modules ).
+$config['modules'] = array(
+	dirname(__FILE__).'/../mymodule/app-data.php'
+);

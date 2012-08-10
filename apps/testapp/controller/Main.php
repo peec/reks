@@ -22,7 +22,7 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 		
 		
 		// Render test.php in the mymodule module.
-		$this->view->mod('mymodule')->render('test');
+		$this->view->childView('mymodule')->render('test');
 		
 		
 		// Doing some USERINPUT things...

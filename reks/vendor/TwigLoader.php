@@ -44,7 +44,7 @@ class TwigLoader extends Loader{
 		
 		$this->twig = new \Twig_Environment($this->loader, array_merge($def, $cnf['twig']));
 
-		$view = $this->app->internalRouter->getResource(App::RES_VIEW);
+		$view = $this->app->view;
 
 		$this->twig->addExtension(new \reks\view\twig\Extension($view));
 	}

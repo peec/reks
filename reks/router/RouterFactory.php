@@ -37,8 +37,9 @@ namespace reks\router;
 use reks\core\App,
 	reks\core\Module,
 	reks\core\Log;
-
 use reks\core\Config;
+
+
 /**
  * Factory for initializing the Router.
  * 
@@ -51,41 +52,15 @@ class RouterFactory{
 	
 	/**
 	 * Creates a new router object inserting $_SERVER  and logger instances aswell as the current time started.
-	 * @param reks\App $app
-	 * @return reks\Router
+	 * @param reks\core\App $app
+	 * @return reks\router\Router
 	 */
-	static public function create(App $app, Router $superRouter = null){
+	static public function create(App $app, Config $routes){
 		$router = new Router(
-			$app,	
-			microtime(true),
+			$app,
 			isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/'
 		);
-		$router->app->module = new Module($router);
-		
-		// Create module object so configuration can add modules.
-		$module = $app->module;
-		
-		
-		$confFile = $app->APP_PATH . '/config.php';
-		
-		$config = array('route' => array());
-		// Inheret config from super if any.
-		if ($superRouter){
-			$config = $superRouter->config->toArray(); // Convert to array.
-			$configHandler = $superRouter->app->configHandler;
-			if (file_exists($confFile))include $confFile;
-		}else{
-			// Include main config.
-			require $confFile;
-			$app->configHandler = isset($configHandler) ? $configHandler : null;
-		}
-		
-		$router->setRoutes(new Config($config['route']));
-		unset($config['route']);
-		$router->setConfig(new Config($config));
-		
-		$router->setLog(new Log($config['log_level'], $config['log_dir']));
-		
+		$router->setRoutes($routes);
 		return $router;
 	}
 	

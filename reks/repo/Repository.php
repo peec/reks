@@ -1,16 +1,18 @@
 <?php
 namespace reks\repo;
 
+use \reks\core\App;
+
 class Repository{
 	/**
 	 * Array of configuration from config.php
-	 * @var array
+	 * @var reks\core\Config
 	 */
 	public $config;
 	
 	/**
 	 * Language instance.
-	 * @var reks\Lang
+	 * @var reks\i18n\Lang
 	 */
 	public $lang;
 	
@@ -22,13 +24,13 @@ class Repository{
 	
 	/**
 	 * Logger instance. Used to log application data.
-	 * @var reks\Log
+	 * @var reks\core\Log
 	 */
 	public $log;
 
 	/**
 	 *
-	 * @var reks\App
+	 * @var reks\core\App
 	 */
 	public $app;
 	
@@ -41,10 +43,10 @@ class Repository{
 	 * @param reks\core\Config $config The global config array.
 	 * @param reks\Lang $lang The language instance.
 	 */
-	public function __construct(\reks\core\Config $config, $lang, $log, $app){
-		$this->config = &$config;
-		$this->lang = $lang;
-		$this->log = $log;
+	public function __construct(App $app){
+		$this->config = $app->config;
+		$this->lang = $app->lang;
+		$this->log = $app->log;
 		$this->app = $app;
 	}
 	
@@ -81,20 +83,28 @@ class Repository{
 	}
 	
 	/**
-	 * Returns a modules model instance.
-	 * @param string $name Module name
+	 * Returns a child Repository instance.
+	 * @param string $appName The application name.
 	 * @return reks\repo\Repository
 	 */
-	public function mod($name){
-		return $this->app->module->get($name)->getTargetRouter()->getResource(\reks\App::RES_REPOSITORY);
+	public function childModel($appName){
+		return $this->app->childApp($appName)->model;
 	}
-	
 	/**
-	 * Returns the super application's ( parent application's ) reks\repo\Repository
+	 * Returns a parent Repository instance.
+	 * @param string $appName The application name.
 	 * @return reks\repo\Repository
 	 */
-	public function super(){
-		return $this->app->superRouter->getResource(\reks\App::RES_REPOSITORY);
+	public function parentModel($appName){
+		return $this->app->parentApp($appName)->model;
+	}
+	/**
+	 * Returns a super Repository instance.
+	 * @param string $appName The application name.
+	 * @return reks\repo\Repository
+	 */
+	public function superModel(){
+		return $this->app->superApp()->model;
 	}
 	
 	
