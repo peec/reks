@@ -93,8 +93,7 @@ class Log{
 	 * Gets what method / controller that called the method.
 	 */
 	protected function getTraceString(){
-		$trace = debug_backtrace();
-		return "{$trace[2]['class']}::{$trace[2]['function']}";
+		return "Unk::Unk";
 	}
 	
 	/**
