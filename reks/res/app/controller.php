@@ -14,6 +14,8 @@ class Main extends \reks\controller\Controller{
 		// Assign $world to "World" to the view.
 		$this->view->assign('world', 'World!!!!!');
 		
+		$this->view->html->title('My website');
+		
 		// Render view/index.php
 		$this->view->render('index');
 	}
