@@ -139,7 +139,7 @@ class App{
 	/**
 	 * @var array Array of sub applications where key is the app name and value is a App instance.
 	 */
-	private $subApps;
+	private $subApps = array();
 	
 	/**
 	 * @var reks\core\App The parent application ( if any ).
@@ -355,6 +355,13 @@ class App{
 		$this->superApp = $app;
 	}
 	
+	/**
+	 * Returns array of children apps.
+	 * @return multitype:
+	 */
+	public function children(){
+		return $this->subApps;
+	}
 	
 	
 	

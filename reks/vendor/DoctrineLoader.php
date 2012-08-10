@@ -37,10 +37,10 @@ class DoctrineLoader extends Loader{
 		
 		$config = new \Doctrine\ORM\Configuration;
 		$config->setMetadataCacheImpl($cache);
-		$driverImpl = $config->newDefaultAnnotationDriver($this->app->APP_PATH . '/model');
+		$driverImpl = $config->newDefaultAnnotationDriver($this->getModelDirs($this->app->superApp()));
 		$config->setMetadataDriverImpl($driverImpl);
 		$config->setQueryCacheImpl($cache);
-		$config->setProxyDir($this->app->APP_PATH . '/proxies');
+		$config->setProxyDir($this->app->superApp()->APP_PATH . '/proxies');
 		$config->setProxyNamespace('proxies');
 		
 		
@@ -51,6 +51,24 @@ class DoctrineLoader extends Loader{
 		}
 		
 		$this->em = \Doctrine\ORM\EntityManager::create($cnf['db_doctrine'], $config);
+		
+		
+	}
+	
+	/**
+	 * Recursivly get all model directories, and add them to doctrine.
+	 * This means, sub modules also has access to parent modules.
+	 * @param App $app
+	 * @return multitype:string
+	 */
+	protected function getModelDirs(App $app){
+		$dirs = array();
+		$dirs[] = $this->app->APP_PATH . DIRECTORY_SEPARATOR . 'model';
+		
+		foreach($this->app->children() as $name => $child){
+			$dirs = array_merge($dirs, $this->getModelDirs($child));
+		}
+		return $dirs;
 	}
 	
 	
