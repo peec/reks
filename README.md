@@ -6,6 +6,8 @@ Super lightweight OOP MVC framework for PHP.
 
 ##### Documentation
 
+- [Documentation on PKJ.NO](http://pkj.no/manual/reks)
+
 
 
 ##### Features
