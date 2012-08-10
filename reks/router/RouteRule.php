@@ -525,7 +525,7 @@ class RouteRule{
 			$obj->method = ($this->getType() == '*' ? 'POST' : $this->getType());
 			$obj->url = '"'.$from.'"';
 			
-			$url = $this->router->getResource(App::RES_URL);
+			$url = $this->router->app->url;
 			
 			// The javascript!
 			$str = sprintf(

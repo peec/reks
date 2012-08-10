@@ -198,22 +198,6 @@ class Url{
 	}
 	
 	
-	/**
-	 * Returns a modules url instance.
-	 * @param string $name Module name
-	 * @return reks\http\Url
-	 */
-	public function mod($name){
-		return $this->router->app->module->get($name)->getTargetRouter()->getResource(App::RES_URL);
-	}
-	
-	/**
-	 * Returns the super application ( parent application ) Url
-	 * @return reks\http\Url
-	 */
-	public function super(){
-		return $this->router->app->superRouter->getResource(App::RES_URL);
-	}
 	
 	/**
 	 * Returns a new encryption object.
