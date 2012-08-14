@@ -71,7 +71,7 @@ class Csrf{
 	 * @param \reks\http\Userinput $ui User input class.
 	 * @param string $storage See class constants STORE_IN_COOKIE OR STORE_IN_SESSION. 
 	 */
-	public function __construct(\reks\http\Userinput $ui, $storage = self::STORE_IN_SESSION){
+	public function __construct(\reks\http\Request $ui, $storage = self::STORE_IN_SESSION){
 		$this->ui = $ui;
 		$this->storage = $storage;
 		// If not generated token, generate. 

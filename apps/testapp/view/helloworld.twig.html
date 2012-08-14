@@ -41,6 +41,14 @@
 				<li><a href="{{url.reverse('tests/Tests.index')}}">Unit test This application</a></li>
 		
 			</ul>		
+		<h2>Upload some files</h2>
+		<form enctype="multipart/form-data" action="{{url.reverse('Main.helloWorld')}}" method="post">
+			Multi testfile[]<input type="file" name="testfile[]" /><br />
+			Multi testfile[]<input type="file" name="testfile[]" /><br />
+			Single single<input type="file" name="single" /><br />
+			
+			<button>Save to cache folder.</button>
+		</form>
 	</div>
 	<footer>
 		REKS group, <a href="http://reks.pkj.no">reks.pkj.no</a>

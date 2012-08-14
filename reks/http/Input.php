@@ -40,26 +40,17 @@ namespace reks\http;
  *
  */
 class Input implements \ArrayAccess{
-	/**
-	 * Type of input see INPUT_* php constants.
-	 * @var int
-	 */
-	private $type;
-	/**
-	 * Helper for \ArrayAccess interface.
-	 * @var int current position
-	 */
-	private $pos;
-
-	/**
-	 * Constructs a new input object.
-	 * @param int $type See PHP's INPUT_* variables.
-	 */
-	public function __construct($type){
-		$this->type = $type;
-		$this->pos = 0;
+	
+	protected $data;
+	protected $saveObjectHandler;
+	
+	public function __construct(array $data){
+		$this->data = $data;	
 	}
 
+	public function setSaveHandler($saveHandler){
+		$this->saveObjectHandler = $saveHandler;
+	}
 	/**
 	 * Magic method
 	 * @param string $name Name of the input
@@ -91,7 +82,7 @@ class Input implements \ArrayAccess{
 	 * @param string $name Name of input
 	 */
 	public function __get($name){
-		return $this->offsetExists($name) ? $this->offsetGet($name) : null;
+		return $this->get($name);
 	}
 
 	/**
@@ -99,117 +90,41 @@ class Input implements \ArrayAccess{
 	 * @see ArrayAccess::offsetSet()
 	 */
 	public function offsetSet($offset, $val) {
-		switch($this->type){
-			case INPUT_COOKIE:
-				$_COOKIE[$offset] = $val;
-				break;
-			case INPUT_ENV:
-				$_ENV[$offset]  = $val;
-				break;
-			case INPUT_GET:
-				$_GET[$offset] = $val;
-				break;
-			case INPUT_POST:
-				$_POST[$offset] = $val;
-				break;
-			case INPUT_REQUEST:
-				$_REQUEST[$offset] = $val;
-				break;
-			case INPUT_SERVER:
-				$_SERVER[$offset] = $val;
-				break;
-			case INPUT_SESSION:
-				$_SESSION[$offset] = $val;
-				break;
-		}
+		$this->data[$offset] = $val;
 	}
 	/**
 	 * (non-PHPdoc)
 	 * @see ArrayAccess::offsetExists()
 	 */
 	public function offsetExists($offset) {
-		switch($this->type){
-			case INPUT_COOKIE:
-				return isset($_COOKIE[$offset]);
-				break;
-			case INPUT_ENV:
-				return isset($_ENV[$offset]);
-				break;
-			case INPUT_GET:
-				return isset($_GET[$offset]);
-				break;
-			case INPUT_POST:
-				return isset($_POST[$offset]);
-				break;
-			case INPUT_REQUEST:
-				return isset($_REQUEST[$offset]);
-				break;
-			case INPUT_SERVER:
-				return isset($_SERVER[$offset]);
-				break;
-			case INPUT_SESSION:
-				return isset($_SESSION[$offset]);
-				break;
-		}
+		return isset($this->data[$offset]);
 	}
 	/**
 	 * (non-PHPdoc)
 	 * @see ArrayAccess::offsetUnset()
 	 */
 	public function offsetUnset($offset) {
-		switch($this->type){
-			case INPUT_COOKIE:
-				unset($_COOKIE[$offset]);
-				break;
-			case INPUT_ENV:
-				unset($_ENV[$offset]);
-				break;
-			case INPUT_GET:
-				unset($_GET[$offset]);
-				break;
-			case INPUT_POST:
-				unset($_POST[$offset]);
-				break;
-			case INPUT_REQUEST:
-				unset($_REQUEST[$offset]);
-				break;
-			case INPUT_SERVER:
-				unset($_SERVER[$offset]);
-				break;
-			case INPUT_SESSION:
-				unset($_SESSION[$offset]);
-				break;
-		}
+		unset($this->data[$offset]);
 	}
 	/**
 	 * (non-PHPdoc)
 	 * @see ArrayAccess::offsetGet()
 	 */
 	public function offsetGet($offset) {
-		switch($this->type){
-			case INPUT_COOKIE:
-				return $_COOKIE[$offset];
-				break;
-			case INPUT_ENV:
-				return $_ENV[$offset];
-				break;
-			case INPUT_GET:
-				return $_GET[$offset];
-				break;
-			case INPUT_POST:
-				return $_POST[$offset];
-				break;
-			case INPUT_REQUEST:
-				return $_REQUEST[$offset];
-				break;
-			case INPUT_SERVER:
-				return $_SERVER[$offset];
-				break;
-			case INPUT_SESSION:
-				return $_SESSION[$offset];
-				break;
-		}
+		return $this->get($offset);
 	}
 
-
+	/**
+	 * Gets the value of a KEY.
+	 * If no value NULL is returned.
+	 * @param string $offset
+	 */
+	public function get($offset){
+		return isset($this->data[$offset]) ? $this->data[$offset] : null;
+	}
+	
+	public function __destruct(){
+		$m = $this->saveObjectHandler;
+		if ($m)$m($this->data);
+	}
 }

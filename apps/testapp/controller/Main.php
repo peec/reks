@@ -27,15 +27,24 @@ class Main extends MyModule{ // Check this! , we are extending a class that real
 		
 		// Doing some USERINPUT things...
 		
-		// Set a session.
-		$this->ui->session->testSession = 'Value of sesion..';
-		// We can also do:
-		$this->ui->session['testSession'] = 'Value of sesion..';
+		// Single file uploade
+		$file = $this->request->file->file('single');
+		if ($file)$file->upload($this->app->APP_PATH . '/cache/' . $file->getName());
 		
-		
-		// $q will be null if we dont get ?q=... in url.
-		if ($q = $this->ui->get->q){
+		// Multiple files.
+		if ($files = $this->request->file->file('testfile')){
+			foreach($files as $file){
+				
+				$file->validator()
+					->isImage() // Must be a image.
+					->maxSize(1024*1024*5) // In bytes.
+					->mime(array('image/jpeg','image/png')) // allowed mime types
+					->extensions(array('jpg','png')); // Allowed file extensions.
+				
+				$file->upload($this->app->APP_PATH . '/cache/' . $file->getName());	
+			}
 			
+			die("Multiple files uploaded.");
 		}
 		
 		// Assign $header to get a specific value.

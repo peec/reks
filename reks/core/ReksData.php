@@ -11,7 +11,7 @@ class ReksData{
 	/**
 	 * @var string The version number of reks
 	 */
-	const VERSION = '1.4.0';
+	const VERSION = '1.4.1';
 	
 	/**
 	 * @var string The name of this framework.

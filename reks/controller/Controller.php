@@ -108,12 +108,6 @@ abstract class Controller{
 	
 	
 	/**
-	 * Wrapper around all possible user-input data for PHP.
-	 * @var reks\http\Userinput
-	 */
-	public $ui;
-	
-	/**
 	 * CSRF protection library
 	 * @var reks\security\Csrf
 	 */
@@ -158,14 +152,13 @@ abstract class Controller{
 	 * @param array $config Array of configuration from config.php
 	 * @param reks\router\Router $router Router reference.
 	 */
-	final public function __construct(\reks\core\Config $config, Router $router, Url $url, Lang $lang, Userinput $ui, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute = null){
+	final public function __construct(\reks\core\Config $config, Router $router, Url $url, Lang $lang, Csrf $csrf, View $view, Request $request, Log $log, \reks\repo\Repository $repo, ActiveRoute $activeRoute = null){
 		$this->config = $config;
 		$this->router = $router;
 		$this->app = $router->app;
 		$this->url = $url;
 		
 		$this->lang = $lang;
-		$this->ui = $ui;
 		$this->csrf = $csrf;
 		$this->view = $view;
 		$this->request = $request;
@@ -181,7 +174,6 @@ abstract class Controller{
 	 * @param string $controller
 	 * @param reks\http\Url $url
 	 * @param reks\i18n\Lang $lang
-	 * @param reks\http\Userinput $ui
 	 * @param reks\security\Csrf $csrf
 	 * @param reks\view\View $view
 	 * @param reks\http\Request $request
@@ -191,7 +183,7 @@ abstract class Controller{
 	 * @return reks\controller\Controller
 	 */
 	static public function init($controller, App $app){
-		$c = new $controller($app->config, $app->router, $app->url, $app->lang, $app->ui, $app->csrf, $app->view, $app->request, $app->log, $app->model, $app->router->activeRoute);
+		$c = new $controller($app->config, $app->router, $app->url, $app->lang, $app->csrf, $app->view, $app->request, $app->log, $app->model, $app->router->activeRoute);
 		$c->setup();
 		return $c;
 	}
@@ -289,7 +281,7 @@ abstract class Controller{
 	 * 
 	 * // Example procedural
 	 * if ($this->addFormListener('post', 'loginForm')){
-	 * 		$ui = $this->ui->post;
+	 * 		$ui = $this->request->post;
 	 * 		return $self->model->News->insert($ui->title, $ui->body);
 	 * }
 	 * </code>
@@ -314,7 +306,7 @@ abstract class Controller{
 		// Input object.
 		$input = null;
 		// If we get request to this.
-		$posted = $this->request->$uiType && $this->ui->$uiType->$formId;
+		$posted = $this->request->$uiType->$formId;
 		
 		// Add listener.
 		$this->view->form->addListener($formId, ($customAction ? $customAction : $this->url->fetchUri()),$viewUi, $this->csrf->token('csrf_tok_uniq'), $input);
@@ -322,16 +314,16 @@ abstract class Controller{
 		
 		// Listener for post.
 		if ($posted){
-			$this->csrf->assertValidate($this->ui->$uiType->csrf_tok_uniq);
+			$this->csrf->assertValidate($this->request->$uiType->csrf_tok_uniq);
 			
-			unset($this->ui->$uiType->csrf_tok_uniq);
-			unset($this->ui->$uiType->$formId);
+			unset($this->request->$uiType->csrf_tok_uniq);
+			unset($this->request->$uiType->$formId);
 			
 			// Safe to regenerate.
 			$this->csrf->refreshToken('csrf_tok_uniq');
 			
 			// Set input object, we will deliver this to the view.	
-			$input = $this->ui->$uiType;	
+			$input = $this->request->$uiType;	
 			if(is_callable($methodOrClosure))
 				$methodOrClosure($input);
 			elseif($methodOrClosure === null){
@@ -356,7 +348,7 @@ abstract class Controller{
 	 * @return reks\Controller
 	 */
 	public function getController($ns){
-		$c = new $ns($this->config, $this->router, $this->url, $this->lang, $this->ui, $this->csrf, $this->view, $this->request, $this->log, $this->model, $this->activeRoute);
+		$c = new $ns($this->config, $this->router, $this->url, $this->lang, $this->csrf, $this->view, $this->request, $this->log, $this->model, $this->activeRoute);
 		return $c;
 	}
 
