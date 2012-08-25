@@ -157,6 +157,14 @@ class Request{
 		}
 	}
 	
+	/**
+	 * Returns a JSON body of the input, useful for js frameworks such as backbone.
+	 */
+	public function getJSON(){
+		$content = file_get_contents("php://input");
+		if (!$content)return array();
+		return json_decode($content, true);
+	}
 	
 	
 }
