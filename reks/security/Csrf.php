@@ -44,9 +44,9 @@ namespace reks\security;
 class Csrf{
 	/**
 	 * User input
-	 * @var reks\http\Userinput
+	 * @var reks\http\Request
 	 */
-	private $ui;
+	private $request;
 	
 	/**
 	 * Type of storage ( cookie or session )
@@ -71,8 +71,8 @@ class Csrf{
 	 * @param \reks\http\Userinput $ui User input class.
 	 * @param string $storage See class constants STORE_IN_COOKIE OR STORE_IN_SESSION. 
 	 */
-	public function __construct(\reks\http\Request $ui, $storage = self::STORE_IN_SESSION){
-		$this->ui = $ui;
+	public function __construct(\reks\http\Request $request, $storage = self::STORE_IN_SESSION){
+		$this->request = $request;
 		$this->storage = $storage;
 		// If not generated token, generate. 
 		$this->generate('csrf_tok_uniq');
@@ -84,7 +84,7 @@ class Csrf{
 	 * check with assertValidate is done in this session.
 	 */
 	public function refreshToken($tokenName='csrf_tok_uniq'){
-		unset($this->ui->{$this->storage}->{$tokenName});
+		unset($this->request->{$this->storage}->{$tokenName});
 		
 		session_regenerate_id();
 		$this->generate();
@@ -96,7 +96,7 @@ class Csrf{
 	 * Generates a new token if its not already set.
 	 */
 	protected function generate($tokenName='csrf_tok_uniq'){
-		if (!$this->ui->{$this->storage}->{$tokenName})$this->ui->{$this->storage}->{$tokenName} = sha1(uniqid(rand(), true));
+		if (!$this->request->{$this->storage}->{$tokenName})$this->request->{$this->storage}->{$tokenName} = sha1(uniqid(rand(), true));
 	}
 	
 	/**
@@ -108,7 +108,7 @@ class Csrf{
 	 * </code>
 	 */
 	public function token($tokenName='csrf_tok_uniq'){
-		$storage = $this->ui->{$this->storage};
+		$storage = $this->request->{$this->storage};
 		return function() use (&$storage, $tokenName){
 			return $storage->$tokenName;
 		};
@@ -134,7 +134,7 @@ class Csrf{
 	 * @throws CsrfException If token is not validated tis will throw exception.
 	 */
 	public function assertSafelink($tokenName='safe_link_csrf'){
-		$token = $this->ui->get->{View::CSRF_TOKEN_NAME};
+		$token = $this->request->get->{View::CSRF_TOKEN_NAME};
 		$tokSrv = $this->token($tokenName);
 		
 		if (!$tokSrv() || $token != $tokSrv()){
