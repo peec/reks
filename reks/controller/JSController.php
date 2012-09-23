@@ -27,7 +27,7 @@ class JSController extends Controller{
 	public function cacheRoutes(){
 		$pubPath = realpath($this->app->PUBLIC_PATH);
 		
-		$scripts = explode(',', $this->url->encryption()->decode($this->ui->get->cacheRoutes));
+		$scripts = explode(',', $this->url->encryption()->decode($this->request->get->cacheRoutes));
 
 		$content = '';
 		

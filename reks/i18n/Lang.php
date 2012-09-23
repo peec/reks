@@ -72,7 +72,7 @@ class Lang{
 	 */
 	private function load(){
 		if (!@include($this->langFile)){
-			throw new InternalServerError("\reks\Lang: Could not load language file ( {$this->langFile} ). It does not exist.");
+			throw new \reks\router\InternalServerError("\reks\Lang: Could not load language file ( {$this->langFile} ). It does not exist.");
 		}
 		
 		$this->store = $lang;

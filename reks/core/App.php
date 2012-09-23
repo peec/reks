@@ -117,11 +117,6 @@ class App{
 	public $model;
 	
 	
-	/**
-	 * Wrapper around all possible user-input data for PHP.
-	 * @var reks\http\Userinput
-	 */
-	public $ui;
 	
 	/**
 	 * CSRF protection library
@@ -184,14 +179,13 @@ class App{
 		
 		
 		// Create obligatory libraries to stub.
+		if (!$this->request)$this->request = Request::bindFromGlobals($this);
 		if (!$this->log)$this->log = new Log($this->config['log_level'], $this->config['log_dir']);
-		if (!$this->ui)$this->ui = new Userinput();
-		if (!$this->csrf)$this->csrf = new Csrf($this->ui);
+		if (!$this->csrf)$this->csrf = new Csrf($this->request);
 		if (!$this->url)$this->url = new Url($this->router, $this->config['remove_scriptpath'], $this->csrf->token(isset($this->config['csrf_token_name']) ? $this->config['csrf_token_name'] : 'safe_link_csrf'));
 		if (!$this->lang)$this->lang = new Lang($this->files->getLangFile());
 		if (!$this->view)$this->view = new View($this);
 		if (!$this->model)$this->model = new Repository($this);
-		if (!$this->request)$this->request = new Request();
 		
 
 		// Register modules now.
@@ -305,7 +299,6 @@ class App{
 		$app->initConfig($this->config); // Then init config ( Can override some config, or every config ).
 		
 		// Set shared resources ( Don't use more memory then we need )
-		$app->ui = $this->superApp->ui;
 		$app->csrf = $this->superApp->csrf;
 		$app->request = $this->superApp->request;
 		
