@@ -1,5 +1,8 @@
-REKS FRAMEWORK (PHP)
-====
+# Deprecated
+
+See [Minibase](https://github.com/peec/minibase) for a much better framework. 
+
+# Reks
 
 Super lightweight OOP MVC framework for PHP.
 
